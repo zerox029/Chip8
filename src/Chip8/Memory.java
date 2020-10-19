@@ -34,4 +34,12 @@ public class Memory {
             memory[address] = value;
         }
     }
+
+    public void printProgramMemory()
+    {
+        for(short i = 0x200; i < 0xFFF; i += 0x1)
+        {
+            System.out.println(String.format("0x%02x", memory[i]));
+        }
+    }
 }

@@ -21,9 +21,9 @@ public class Chip8 {
 
     public void loadRom(String title) throws IOException
     {
-        File file = new File("roms/" + title);
+        File file = new File(Utils.ROMS_PATH + title);
         byte[] bytes = Files.readAllBytes(file.toPath());
-        short currentAddress = 0x200;
+        short currentAddress = Utils.FIRST_PROGRAM_SPACE_ADDRESS;
 
         for (byte b : bytes)
         {
@@ -31,6 +31,6 @@ public class Chip8 {
             currentAddress += 0x1;
         }
 
-        System.out.println("Successfully loaded rom");
+        System.out.println("Successfully loaded rom " + title);
     }
 }

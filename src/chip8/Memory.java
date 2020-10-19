@@ -1,4 +1,4 @@
-package Chip8;
+package chip8;
 
 public class Memory {
     private byte[] memory;
@@ -14,8 +14,7 @@ public class Memory {
     {
         if(address > 0xFFF)
         {
-            System.err.println("Memory address out of range. 0x000 to 0xFFF are allowed");
-            return 0x00;
+            throw new IllegalArgumentException("Memory address out of range. 0x000 to 0xFFF are allowed");
         }
         else
         {
@@ -27,7 +26,7 @@ public class Memory {
     {
         if(address > 0xFFF)
         {
-            System.err.println("Memory address out of range. 0x000 to 0xFFF are allowed");
+            throw new IllegalArgumentException("Memory address out of range. 0x000 to 0xFFF are allowed");
         }
         else
         {

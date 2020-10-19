@@ -1,4 +1,4 @@
-package Chip8;
+package chip8;
 
 public class Registers {
     private byte[] V; /* 16 general purpose 8bit registers */

@@ -1,4 +1,4 @@
-package Chip8;
+package chip8;
 
 import java.io.File;
 import java.io.IOException;

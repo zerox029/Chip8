@@ -28,22 +28,115 @@ public class CPU {
         registers.setPC((short)(registers.getPC() + 0x2));
     }
 
-    public void decodeAndRunOpcode()
+    public void decodeAndRunOpcode() throws UnknownOpcodeException
     {
+        switch(currentOpcode & 0xF000)
+        {
+            case 0x0000:
+                switch (currentOpcode & 0x000F)
+                {
+                    case 0x0000:
+                        cls();
+                        break;
+                    case 0x00e:
+                        ret();
+                        break;
+                }
+            case 0xA000:
+                loadToI();
+                break;
+            case 0x2000:
+                call();
+                break;
+            case 0x8000:
+                switch (currentOpcode & 0x000F)
+                {
+                    case 0x0004:
+                        addToRegCarry();
+                        break;
+                }
+            case 0xF000:
+                switch (currentOpcode & 0x00FF)
+                {
+                    case 0x0033:
+                        loadVXasBCDtoMemory();
+                        break;
+                }
+        }
+
         switch (currentOpcode)
         {
             case 0x00e0:
-                cl();
+                cls();
                 break;
             default:
-                break;
+                throw new UnknownOpcodeException();
         }
     }
 
-    ///Opcode 0x00e0
+
+    ////TODO: Move all the opcodes to a different class
+    ///00E0
     ///Clears the screen
-    private void cl()
+    private void cls()
     {
         System.out.println("Clear screen");
+    }
+
+    ///00EE
+    ///Returns from a subroutine
+    private void ret()
+    {
+
+    }
+
+    ///2NNN
+    ///Calls Calls subroutine at NNN
+    private void call()
+    {
+        short value = (short)(currentOpcode & 0x0FFF); //set value to NNN
+
+        memory.setStackAtValue(registers.getSP(), value);
+        registers.setSP((byte)(registers.getSP() + 1));
+
+        registers.setPC(value);
+    }
+
+    ///ANNN
+    ///Sets I to the address NNN.
+    private void loadToI()
+    {
+        short value = (short)(currentOpcode & 0x0FFF);
+        registers.setI(value);
+    }
+
+    ///8XY4
+    ///The values of Vx and Vy are added together. If the result is greater than 8 bits (i.e., > 255,) VF is set to 1,
+    ///otherwise 0. Only the lowest 8 bits of the result are kept, and stored in Vx
+    private void addToRegCarry()
+    {
+        byte x = registers.getVAtAddress((currentOpcode & 0x0F00) >> 8);
+        byte y = registers.getVAtAddress((currentOpcode & 0x00F0) >> 4);
+
+        if(y > (0xFF - x))
+        {
+            registers.setVAtAddress(0xF, (byte) 1);
+        }
+        else
+        {
+            registers.setVAtAddress(0xF, (byte) 0);
+        }
+
+        registers.setVAtAddress(x, (byte)(x + y));
+    }
+
+    ///FX33
+    ///Store BCD representation of Vx in memory locations I, I+1, and I+2
+    private void loadVXasBCDtoMemory()
+    {
+        byte vx = registers.getVAtAddress((byte)(currentOpcode & 0x0F00) >> 8);
+        memory.setMemoryAtAddress(registers.getI(), (byte)(vx / 100));
+        memory.setMemoryAtAddress((short)(registers.getI() + 1), (byte)((vx / 10) % 10));
+        memory.setMemoryAtAddress((short)(registers.getI() + 2), (byte)((vx % 100) % 10));
     }
 }

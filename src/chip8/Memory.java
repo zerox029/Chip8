@@ -34,6 +34,15 @@ public class Memory {
         }
     }
 
+    public short getStackAtValue(byte pointer) { return stack[pointer]; }
+    public void setStackAtValue(byte pointer, short value)
+    {
+        if(pointer < Utils.STACK_SIZE)
+        {
+            stack[pointer] = value;
+        }
+    }
+
     public void printProgramMemory()
     {
         for(short i = Utils.FIRST_PROGRAM_SPACE_ADDRESS; i < Utils.MAX_MEMORY_ADDRESS; i += 0x1)

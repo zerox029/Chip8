@@ -220,7 +220,7 @@ class CPUTests {
     }
 
     ///7XKK
-    ///Puts the value of KK into Vx
+    ///Adds the value kk to the value of register Vx, then stores the result in Vx.
     @Test
     void addOnRegister() throws UnknownOpcodeException
     {

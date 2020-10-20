@@ -185,7 +185,8 @@ public class CPU {
     {
         byte kk = (byte)((currentOpcode & 0x00FF));
         byte x = (byte)((currentOpcode & 0x0F00) >> 8);
-        byte sum = (byte) (kk + x);
+        byte xValue = registers.getVAtAddress(x);
+        byte sum = (byte) (kk + xValue);
 
         registers.setVAtAddress(x, sum);
     }

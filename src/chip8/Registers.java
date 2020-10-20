@@ -12,12 +12,7 @@ public class Registers {
 
     public Registers()
     {
-        V = new byte[Utils.STACK_SIZE];
-        I = 0x0000;
-        DT = 0x00;
-        ST = 0x00;
-        PC = Utils.FIRST_PROGRAM_SPACE_ADDRESS;
-        SP = 0x00;
+        resetAllRegisters();
     }
 
     public byte getVAtAddress(int address) { return V[address]; }
@@ -37,4 +32,14 @@ public class Registers {
 
     public byte getSP() { return SP; }
     public void setSP(byte value) { SP = value; }
+
+    public void resetAllRegisters()
+    {
+        V = new byte[Utils.STACK_SIZE];
+        I = 0x0000;
+        DT = 0x00;
+        ST = 0x00;
+        PC = Utils.FIRST_PROGRAM_SPACE_ADDRESS;
+        SP = 0x00;
+    }
 }

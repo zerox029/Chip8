@@ -59,8 +59,15 @@ public class Chip8 {
 
     private void emulateCycle()
     {
-        cpu.fetchOpcode();
-        cpu.decodeAndRunOpcode();
-        cpu.incrementPC();
+        try
+        {
+            cpu.fetchOpcode();
+            cpu.decodeAndRunOpcode();
+            cpu.incrementPC();
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 }

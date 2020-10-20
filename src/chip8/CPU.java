@@ -7,11 +7,13 @@ public class CPU {
 
     private short currentOpcode;
 
-    CPU(Memory memory, Registers registers)
+    public CPU(Memory memory, Registers registers)
     {
         this.memory = memory;
         this.registers = registers;
     }
+
+    public short getCurrentOpcode() { return currentOpcode; }
 
     public void fetchOpcode()
     {
@@ -42,6 +44,7 @@ public class CPU {
                         ret();
                         break;
                 }
+                break;
             case 0xA000:
                 loadToI();
                 break;
@@ -55,6 +58,7 @@ public class CPU {
                         addToRegCarry();
                         break;
                 }
+                break;
             case 0xF000:
                 switch (currentOpcode & 0x00FF)
                 {
@@ -62,13 +66,8 @@ public class CPU {
                         loadVXasBCDtoMemory();
                         break;
                 }
-        }
-
-        switch (currentOpcode)
-        {
-            case 0x00e0:
-                cls();
                 break;
+
             default:
                 throw new UnknownOpcodeException();
         }
@@ -96,7 +95,7 @@ public class CPU {
     {
         short value = (short)(currentOpcode & 0x0FFF); //set value to NNN
 
-        memory.setStackAtValue(registers.getSP(), value);
+        memory.setStackAtValue(registers.getSP(), registers.getPC());
         registers.setSP((byte)(registers.getSP() + 1));
 
         registers.setPC(value);
@@ -115,10 +114,14 @@ public class CPU {
     ///otherwise 0. Only the lowest 8 bits of the result are kept, and stored in Vx
     private void addToRegCarry()
     {
-        byte x = registers.getVAtAddress((currentOpcode & 0x0F00) >> 8);
-        byte y = registers.getVAtAddress((currentOpcode & 0x00F0) >> 4);
+        byte x = (byte)((currentOpcode & 0x0F00) >> 8);
+        byte y = (byte)((currentOpcode & 0x00F0) >> 4);
 
-        if(y > (0xFF - x))
+        int uSign_xValue = registers.getVAtAddress(x) & 0xff;
+        int uSign_yValue = registers.getVAtAddress(y) & 0xff;
+        int uSign_product = (registers.getVAtAddress(x) + registers.getVAtAddress(y)) & 0xff;
+
+        if(uSign_yValue > (0xFF - uSign_xValue))
         {
             registers.setVAtAddress(0xF, (byte) 1);
         }
@@ -127,16 +130,28 @@ public class CPU {
             registers.setVAtAddress(0xF, (byte) 0);
         }
 
-        registers.setVAtAddress(x, (byte)(x + y));
+        registers.setVAtAddress(x, (byte)(uSign_product));
     }
 
     ///FX33
     ///Store BCD representation of Vx in memory locations I, I+1, and I+2
+    ///Taken from ismael rodriguez's implementation
     private void loadVXasBCDtoMemory()
     {
-        byte vx = registers.getVAtAddress((byte)(currentOpcode & 0x0F00) >> 8);
-        memory.setMemoryAtAddress(registers.getI(), (byte)(vx / 100));
-        memory.setMemoryAtAddress((short)(registers.getI() + 1), (byte)((vx / 10) % 10));
-        memory.setMemoryAtAddress((short)(registers.getI() + 2), (byte)((vx % 100) % 10));
+        byte x = (byte)((currentOpcode & 0x0F00) >> 8);
+        byte vx = registers.getVAtAddress(x);
+        int uSign_vx = vx & 0xFF;
+
+        int hundreds = uSign_vx / 100;
+        uSign_vx = uSign_vx - hundreds*100;
+
+        int tens = uSign_vx / 10;
+        uSign_vx = uSign_vx - tens*10;
+
+        int units = uSign_vx;
+
+        memory.setMemoryAtAddress(registers.getI(), (byte)hundreds);
+        memory.setMemoryAtAddress((short)(registers.getI() + 1), (byte)tens);
+        memory.setMemoryAtAddress((short)(registers.getI() + 2), (byte)units);
     }
 }

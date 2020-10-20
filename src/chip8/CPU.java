@@ -59,6 +59,9 @@ public class CPU {
             case 0x4000:
                 skipOnNonEqualByte();
                 break;
+            case 0x5000:
+                skipOnEqualRegister();
+                break;
             case 0x8000:
                 switch (currentOpcode & 0x000F)
                 {
@@ -143,6 +146,18 @@ public class CPU {
         byte xValue = registers.getVAtAddress(x);
 
         if(kk != xValue) { registers.setPC((short) (registers.getPC() + 0x2)); }
+    }
+
+    ///5XY0
+    ///Compares register Vx to Vy, if equal, skip the next instruction
+    private void skipOnEqualRegister()
+    {
+        byte x = (byte)((currentOpcode & 0x0F00) >> 8);
+        byte y = (byte)((currentOpcode & 0x00F0) >> 4);
+        short xValue = registers.getVAtAddress(x);
+        short yValue = registers.getVAtAddress(y);
+
+        if(xValue == yValue) { registers.setPC((short) (registers.getPC() + 0x2)); }
     }
 
     ///ANNN

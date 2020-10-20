@@ -168,6 +168,42 @@ class CPUTests {
         assertNotEquals(0x0202, registers.getPC());
     }
 
+    ///5XY0
+    ///Compares register Vx to Vy, if equal, skip the next instruction
+    @Test
+    void skipOnEqualRegister() throws UnknownOpcodeException
+    {
+        registers.resetAllRegisters();
+
+        registers.setVAtAddress(0x2, (byte) 0x4D);
+        registers.setVAtAddress(0x7, (byte) 0x4D);
+
+        memory.setMemoryAtAddress((short) 0x200, (byte)0x52);
+        memory.setMemoryAtAddress((short) 0x201, (byte)0x70);
+        cpu.fetchOpcode();
+        cpu.decodeAndRunOpcode();
+
+        assertEquals(0x0202, registers.getPC());
+    }
+
+    ///5XY0
+    ///Compares register Vx to Vy, if equal, skip the next instruction
+    @Test
+    void dontSkipOnEqualRegister() throws UnknownOpcodeException
+    {
+        registers.resetAllRegisters();
+
+        registers.setVAtAddress(0x2, (byte) 0x4D);
+        registers.setVAtAddress(0x7, (byte) 0x7F);
+
+        memory.setMemoryAtAddress((short) 0x200, (byte)0x52);
+        memory.setMemoryAtAddress((short) 0x201, (byte)0x70);
+        cpu.fetchOpcode();
+        cpu.decodeAndRunOpcode();
+
+        assertNotEquals(0x0202, registers.getPC());
+    }
+
     ///ANNN
     ///Sets I to the address NNN.
     @Test

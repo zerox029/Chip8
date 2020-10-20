@@ -117,6 +117,57 @@ class CPUTests {
         assertEquals(0x0202, registers.getPC());
     }
 
+    ///3XKK
+    ///Compares register Vx to kk, if they are equal, skip the next instruction
+    @Test
+    void dontSkipOnEqualByte() throws UnknownOpcodeException
+    {
+        registers.resetAllRegisters();
+
+        registers.setVAtAddress(0x2, (byte) 0x3F);
+
+        memory.setMemoryAtAddress((short) 0x200, (byte)0x32);
+        memory.setMemoryAtAddress((short) 0x201, (byte)0x4D);
+        cpu.fetchOpcode();
+        cpu.decodeAndRunOpcode();
+
+        assertNotEquals(0x0202, registers.getPC());
+    }
+
+    ///4XKK
+    ///Compares register Vx to kk, if they are not equal, skip the next instruction
+    @Test
+    void skipOnNonEqualByte() throws UnknownOpcodeException
+    {
+        registers.resetAllRegisters();
+
+        registers.setVAtAddress(0x2, (byte) 0x3F);
+
+        memory.setMemoryAtAddress((short) 0x200, (byte)0x42);
+        memory.setMemoryAtAddress((short) 0x201, (byte)0x4D);
+        cpu.fetchOpcode();
+        cpu.decodeAndRunOpcode();
+
+        assertEquals(0x0202, registers.getPC());
+    }
+
+    ///4XKK
+    ///Compares register Vx to kk, if they are not equal, skip the next instruction
+    @Test
+    void dontSkipOnNonEqualByte() throws UnknownOpcodeException
+    {
+        registers.resetAllRegisters();
+
+        registers.setVAtAddress(0x2, (byte) 0x4D);
+
+        memory.setMemoryAtAddress((short) 0x200, (byte)0x42);
+        memory.setMemoryAtAddress((short) 0x201, (byte)0x4D);
+        cpu.fetchOpcode();
+        cpu.decodeAndRunOpcode();
+
+        assertNotEquals(0x0202, registers.getPC());
+    }
+
     ///ANNN
     ///Sets I to the address NNN.
     @Test

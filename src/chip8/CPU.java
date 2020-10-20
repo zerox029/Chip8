@@ -62,6 +62,9 @@ public class CPU {
             case 0x5000:
                 skipOnEqualRegister();
                 break;
+            case 0x6000:
+                loadToRegister();
+                break;
             case 0x8000:
                 switch (currentOpcode & 0x000F)
                 {
@@ -158,6 +161,15 @@ public class CPU {
         short yValue = registers.getVAtAddress(y);
 
         if(xValue == yValue) { registers.setPC((short) (registers.getPC() + 0x2)); }
+    }
+
+    ///6XKK
+    ///Puts the value of KK into Vx
+    private void loadToRegister()
+    {
+        byte kk = (byte)((currentOpcode & 0x00FF));
+        byte x = (byte)((currentOpcode & 0x0F00) >> 8);
+        registers.setVAtAddress(x, kk);
     }
 
     ///ANNN

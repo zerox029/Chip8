@@ -204,6 +204,21 @@ class CPUTests {
         assertNotEquals(0x0202, registers.getPC());
     }
 
+    ///6XKK
+    ///Puts the value of KK into Vx
+    @Test
+    void loadToRegister() throws UnknownOpcodeException
+    {
+        registers.resetAllRegisters();
+
+        memory.setMemoryAtAddress((short) 0x200, (byte)0x62);
+        memory.setMemoryAtAddress((short) 0x201, (byte)0xD4);
+        cpu.fetchOpcode();
+        cpu.decodeAndRunOpcode();
+
+        assertNotEquals(0xD4, registers.getVAtAddress(2));
+    }
+
     ///ANNN
     ///Sets I to the address NNN.
     @Test

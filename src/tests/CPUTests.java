@@ -43,11 +43,31 @@ class CPUTests {
 
 
     /** Specific opcodes **/
+    ///00EE
+    ///Returns from a subroutine
+    @Test
+    void ret() throws UnknownOpcodeException
+    {
+        registers.resetAllRegisters();
+
+        registers.setSP((byte)0x1);
+        memory.setStackAtValue((byte)0x1, (short)0x05C3);
+
+        memory.setMemoryAtAddress((short) 0x200, (byte)0x00);
+        memory.setMemoryAtAddress((short) 0x201, (byte)0xEE);
+        cpu.fetchOpcode();
+        cpu.decodeAndRunOpcode();
+
+        assertEquals(0x05C3, registers.getPC());
+        assertEquals(0x0, registers.getSP());
+    }
+
+    ///1NNN
+    ///Sets the PC to NNN
     @Test
     void jump() throws UnknownOpcodeException
     {
         registers.resetAllRegisters();
-
 
         memory.setMemoryAtAddress((short) 0x200, (byte)0x14);
         memory.setMemoryAtAddress((short) 0x201, (byte)0xC7);
@@ -57,11 +77,12 @@ class CPUTests {
         assertEquals(0x04C7, registers.getPC());
     }
 
+    ///2NNN
+    ///Calls Calls subroutine at NNN
     @Test
     void call() throws UnknownOpcodeException
     {
         registers.resetAllRegisters();
-
 
         memory.setMemoryAtAddress((short) 0x200, (byte)0x2B);
         memory.setMemoryAtAddress((short) 0x201, (byte)0x20);
@@ -70,15 +91,34 @@ class CPUTests {
 
 
         //Stack check
-        assertEquals(0x200, memory.getStackAtValue((byte)0x00));
+        assertEquals(0x200, memory.getStackAtValue((byte)0x01));
 
         //Current PC check
         assertEquals(0xB20, registers.getPC());
 
         //Current SP check
-        assertEquals(1, registers.getSP());
+        assertEquals(0x1, registers.getSP());
     }
 
+    ///3XKK
+    ///Compares register Vx to kk, if they are equal, skip the next instruction
+    @Test
+    void skipOnEqualByte() throws UnknownOpcodeException
+    {
+        registers.resetAllRegisters();
+
+        registers.setVAtAddress(0x2, (byte) 0x4D);
+
+        memory.setMemoryAtAddress((short) 0x200, (byte)0x32);
+        memory.setMemoryAtAddress((short) 0x201, (byte)0x4D);
+        cpu.fetchOpcode();
+        cpu.decodeAndRunOpcode();
+
+        assertEquals(0x0202, registers.getPC());
+    }
+
+    ///ANNN
+    ///Sets I to the address NNN.
     @Test
     void loadToI() throws UnknownOpcodeException
     {
@@ -92,6 +132,9 @@ class CPUTests {
         assertEquals(0xB20, registers.getI());
     }
 
+    ///8XY4
+    ///The values of Vx and Vy are added together. If the result is greater than 8 bits (i.e., > 255,) VF is set to 1,
+    ///otherwise 0. Only the lowest 8 bits of the result are kept, and stored in Vx
     @Test
     void addToRegWithCarry() throws UnknownOpcodeException
     {
@@ -109,6 +152,9 @@ class CPUTests {
         assertEquals(1, registers.getVAtAddress(0xF));
     }
 
+    ///8XY4
+    ///The values of Vx and Vy are added together. If the result is greater than 8 bits (i.e., > 255,) VF is set to 1,
+    ///otherwise 0. Only the lowest 8 bits of the result are kept, and stored in Vx
     @Test
     void addToRegWithoutCarry() throws UnknownOpcodeException
     {
@@ -126,6 +172,9 @@ class CPUTests {
         assertEquals(0, registers.getVAtAddress(0xF));
     }
 
+    ///FX33
+    ///Store BCD representation of Vx in memory locations I, I+1, and I+2
+    ///Taken from ismael rodriguez's implementation
     @Test
     void loadVXasBCDtoMemory() throws UnknownOpcodeException
     {

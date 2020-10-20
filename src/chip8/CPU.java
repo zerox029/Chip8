@@ -53,6 +53,9 @@ public class CPU {
             case 0x2000:
                 call();
                 break;
+            case 0x3000:
+                skipOnEqualByte();
+                break;
             case 0x8000:
                 switch (currentOpcode & 0x000F)
                 {
@@ -91,7 +94,9 @@ public class CPU {
     ///Returns from a subroutine
     private void ret()
     {
-
+        short stackTopAddress = memory.getStackAtValue(registers.getSP());
+        registers.setPC(stackTopAddress);
+        registers.setSP((byte)(registers.getSP() - 0x01));
     }
 
     ///1NNN
@@ -109,10 +114,21 @@ public class CPU {
     {
         short value = (short)(currentOpcode & 0x0FFF); //set value to NNN
 
-        memory.setStackAtValue(registers.getSP(), registers.getPC());
         registers.setSP((byte)(registers.getSP() + 1));
+        memory.setStackAtValue(registers.getSP(), registers.getPC());
 
         registers.setPC(value);
+    }
+
+    ///3XKK
+    ///Compares register Vx to kk, if they are equal, skip the next instruction
+    private void skipOnEqualByte()
+    {
+        byte kk = (byte)(currentOpcode & 0x00FF);
+        byte x = (byte)((currentOpcode & 0x0F00) >> 8);
+        byte xValue = registers.getVAtAddress(x);
+
+        if(kk == xValue) { registers.setPC((short) (registers.getPC() + 0x2)); }
     }
 
     ///ANNN

@@ -1,5 +1,7 @@
 package chip8;
 
+import exceptions.UnknownOpcodeException;
+
 public class CPU {
 
     private Memory memory;

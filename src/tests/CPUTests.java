@@ -3,7 +3,7 @@ package tests;
 import chip8.CPU;
 import chip8.Memory;
 import chip8.Registers;
-import chip8.UnknownOpcodeException;
+import exceptions.UnknownOpcodeException;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 

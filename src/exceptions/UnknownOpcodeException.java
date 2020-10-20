@@ -1,4 +1,4 @@
-package chip8;
+package exceptions;
 
 public class UnknownOpcodeException extends Exception {
     public UnknownOpcodeException() {}

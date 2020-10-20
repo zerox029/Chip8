@@ -65,6 +65,9 @@ public class CPU {
             case 0x6000:
                 loadToRegister();
                 break;
+            case 0x7000:
+                addOnRegister();
+                break;
             case 0x8000:
                 switch (currentOpcode & 0x000F)
                 {
@@ -169,15 +172,19 @@ public class CPU {
     {
         byte kk = (byte)((currentOpcode & 0x00FF));
         byte x = (byte)((currentOpcode & 0x0F00) >> 8);
+
         registers.setVAtAddress(x, kk);
     }
 
-    ///ANNN
-    ///Sets I to the address NNN.
-    private void loadToI()
+    ///7XKK
+    ///Adds the value kk to the value of register Vx, then stores the result in Vx.
+    private void addOnRegister()
     {
-        short value = (short)(currentOpcode & 0x0FFF);
-        registers.setI(value);
+        byte kk = (byte)((currentOpcode & 0x00FF));
+        byte x = (byte)((currentOpcode & 0x0F00) >> 8);
+        byte sum = (byte) (kk + x);
+
+        registers.setVAtAddress(x, sum);
     }
 
     ///8XY4
@@ -202,6 +209,14 @@ public class CPU {
         }
 
         registers.setVAtAddress(x, (byte)(uSign_product));
+    }
+
+    ///ANNN
+    ///Sets I to the address NNN.
+    private void loadToI()
+    {
+        short value = (short)(currentOpcode & 0x0FFF);
+        registers.setI(value);
     }
 
     ///FX33

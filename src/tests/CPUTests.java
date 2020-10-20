@@ -219,19 +219,21 @@ class CPUTests {
         assertNotEquals(0xD4, registers.getVAtAddress(2));
     }
 
-    ///ANNN
-    ///Sets I to the address NNN.
+    ///7XKK
+    ///Puts the value of KK into Vx
     @Test
-    void loadToI() throws UnknownOpcodeException
+    void addOnRegister() throws UnknownOpcodeException
     {
         registers.resetAllRegisters();
 
-        memory.setMemoryAtAddress((short) 0x200, (byte)0xAB);
-        memory.setMemoryAtAddress((short) 0x201, (byte)0x20);
+        registers.setVAtAddress(0x2, (byte) 0xA);
+
+        memory.setMemoryAtAddress((short) 0x200, (byte)0x72);
+        memory.setMemoryAtAddress((short) 0x201, (byte)0x34);
         cpu.fetchOpcode();
         cpu.decodeAndRunOpcode();
 
-        assertEquals(0xB20, registers.getI());
+        assertNotEquals(0x3E, registers.getVAtAddress(2));
     }
 
     ///8XY4
@@ -272,6 +274,21 @@ class CPUTests {
 
         assertEquals(0x7, registers.getVAtAddress(3));
         assertEquals(0, registers.getVAtAddress(0xF));
+    }
+
+    ///ANNN
+    ///Sets I to the address NNN.
+    @Test
+    void loadToI() throws UnknownOpcodeException
+    {
+        registers.resetAllRegisters();
+
+        memory.setMemoryAtAddress((short) 0x200, (byte)0xAB);
+        memory.setMemoryAtAddress((short) 0x201, (byte)0x20);
+        cpu.fetchOpcode();
+        cpu.decodeAndRunOpcode();
+
+        assertEquals(0xB20, registers.getI());
     }
 
     ///FX33

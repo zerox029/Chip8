@@ -71,6 +71,9 @@ public class CPU {
             case 0x8000:
                 switch (currentOpcode & 0x000F)
                 {
+                    case 0x0000:
+                        duplicateRegister();
+                        break;
                     case 0x0004:
                         addToRegCarry();
                         break;
@@ -185,6 +188,17 @@ public class CPU {
         byte sum = (byte) (kk + x);
 
         registers.setVAtAddress(x, sum);
+    }
+
+    ///8XY0
+    ///Stores the value of register Vy in register Vx.
+    private void duplicateRegister()
+    {
+        byte x = (byte)((currentOpcode & 0x0F00) >> 8);
+        byte y = (byte)((currentOpcode & 0x00F0) >> 4);
+        byte yValue = registers.getVAtAddress(y);
+
+        registers.setVAtAddress(x, yValue);
     }
 
     ///8XY4

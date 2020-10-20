@@ -233,7 +233,24 @@ class CPUTests {
         cpu.fetchOpcode();
         cpu.decodeAndRunOpcode();
 
-        assertNotEquals(0x3E, registers.getVAtAddress(2));
+        assertEquals(0x3E, registers.getVAtAddress(2));
+    }
+
+    ///8XY0
+    ///Stores the value of register Vy in register Vx.
+    @Test
+    void duplicateRegister() throws UnknownOpcodeException
+    {
+        registers.resetAllRegisters();
+
+        registers.setVAtAddress(0x2, (byte) 0xA);
+
+        memory.setMemoryAtAddress((short) 0x200, (byte)0x8B);
+        memory.setMemoryAtAddress((short) 0x201, (byte)0x20);
+        cpu.fetchOpcode();
+        cpu.decodeAndRunOpcode();
+
+        assertEquals(0xA, registers.getVAtAddress(0xB));
     }
 
     ///8XY4

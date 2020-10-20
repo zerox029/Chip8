@@ -44,6 +44,20 @@ class CPUTests {
 
     /** Specific opcodes **/
     @Test
+    void jump() throws UnknownOpcodeException
+    {
+        registers.resetAllRegisters();
+
+
+        memory.setMemoryAtAddress((short) 0x200, (byte)0x14);
+        memory.setMemoryAtAddress((short) 0x201, (byte)0xC7);
+        cpu.fetchOpcode();
+        cpu.decodeAndRunOpcode();
+
+        assertEquals(0x04C7, registers.getPC());
+    }
+
+    @Test
     void call() throws UnknownOpcodeException
     {
         registers.resetAllRegisters();

@@ -47,8 +47,8 @@ public class CPU {
                         break;
                 }
                 break;
-            case 0xA000:
-                loadToI();
+            case 0x1000:
+                jump();
                 break;
             case 0x2000:
                 call();
@@ -60,6 +60,9 @@ public class CPU {
                         addToRegCarry();
                         break;
                 }
+                break;
+            case 0xA000:
+                loadToI();
                 break;
             case 0xF000:
                 switch (currentOpcode & 0x00FF)
@@ -89,6 +92,15 @@ public class CPU {
     private void ret()
     {
 
+    }
+
+    ///1NNN
+    ///Sets the PC to NNN
+    private void jump()
+    {
+        short value = (short)(currentOpcode & 0x0FFF);
+
+        registers.setPC(value);
     }
 
     ///2NNN

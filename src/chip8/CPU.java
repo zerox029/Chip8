@@ -71,6 +71,7 @@ public class CPU {
             case (short)0x8000:
                 if(getCurrentOpcodeLastDigit()== 0x0) { duplicateRegister(); }
                 else if(getCurrentOpcodeLastDigit() == 0x1) { orRegister(); }
+                else if(getCurrentOpcodeLastDigit() == 0x2) { andRegister(); }
                 else if(getCurrentOpcodeLastDigit() == 0x4) { addToRegCarry(); }
                 break;
             case (short)0xA000:
@@ -179,6 +180,17 @@ public class CPU {
         byte xValue = registers.getVAtAddress(getX());
         byte yValue = registers.getVAtAddress(getY());
         byte orResult = (byte) (xValue | yValue);
+
+        registers.setVAtAddress(getX(), orResult);
+    }
+
+    ///8XY2
+    ///Performs a bitwise OR on the values of Vx and Vy, then stores the result in Vx
+    private void andRegister()
+    {
+        byte xValue = registers.getVAtAddress(getX());
+        byte yValue = registers.getVAtAddress(getY());
+        byte orResult = (byte) (xValue & yValue);
 
         registers.setVAtAddress(getX(), orResult);
     }

@@ -42,12 +42,4 @@ public class Memory {
             stack[pointer] = value;
         }
     }
-
-    public void printProgramMemory()
-    {
-        for(short i = Utils.FIRST_PROGRAM_SPACE_ADDRESS; i < Utils.MAX_MEMORY_ADDRESS; i += 0x1)
-        {
-            System.out.println(String.format("0x%02x", memory[i]));
-        }
-    }
 }

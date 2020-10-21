@@ -1,7 +1,5 @@
 package chip8;
 
-import jdk.jshell.execution.Util;
-
 public class Registers {
     private byte[] V; /* 16 general purpose 8bit registers */
     private short I; /* 16bit register, generally used to store memory addresses */

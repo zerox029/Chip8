@@ -3,12 +3,15 @@ package chip8;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Chip8 {
     private Registers registers;
     private Memory memory;
     private CPU cpu;
-    private boolean running;
+
+    private final static Logger LOGGER = Logger.getLogger(Chip8.class.getName());
 
     public Chip8()
     {
@@ -29,8 +32,6 @@ public class Chip8 {
         registers = new Registers();
         memory = new Memory();
         cpu = new CPU(memory, registers);
-
-        running = true;
     }
 
     public void loadRom(String title) throws IOException
@@ -45,15 +46,11 @@ public class Chip8 {
             currentAddress += 0x1;
         }
 
-        System.out.println("Successfully loaded rom " + title);
+        LOGGER.info("Successfully loaded rom");
     }
 
     public void emulationLoop()
-    {/*
-        while(running)
-        {
-            emulateCycle();
-        }*/
+    {
         emulateCycle();
     }
 

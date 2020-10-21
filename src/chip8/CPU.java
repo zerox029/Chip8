@@ -37,15 +37,7 @@ public class CPU {
         switch(currentOpcode & 0xF000)
         {
             case 0x0000:
-                switch (currentOpcode & 0x000F)
-                {
-                    case 0x0000:
-                        cls();
-                        break;
-                    case 0x00e:
-                        ret();
-                        break;
-                }
+                if((currentOpcode & 0x000F) == 0x000E) { ret(); }
                 break;
             case 0x1000:
                 jump();
@@ -69,26 +61,14 @@ public class CPU {
                 addOnRegister();
                 break;
             case 0x8000:
-                switch (currentOpcode & 0x000F)
-                {
-                    case 0x0000:
-                        duplicateRegister();
-                        break;
-                    case 0x0004:
-                        addToRegCarry();
-                        break;
-                }
+                if((currentOpcode & 0x000F) == 0x0000) { duplicateRegister(); }
+                else if((currentOpcode & 0x000F) == 0x0004) { addToRegCarry(); }
                 break;
             case 0xA000:
                 loadToI();
                 break;
             case 0xF000:
-                switch (currentOpcode & 0x00FF)
-                {
-                    case 0x0033:
-                        loadVXasBCDtoMemory();
-                        break;
-                }
+                if((currentOpcode & 0x00FF) == 0x0033) { loadVXasBCDtoMemory(); }
                 break;
 
             default:
@@ -98,13 +78,6 @@ public class CPU {
 
 
     ////TODO: Move all the opcodes to a different class
-    ///00E0
-    ///Clears the screen
-    private void cls()
-    {
-        System.out.println("Clear screen");
-    }
-
     ///00EE
     ///Returns from a subroutine
     private void ret()
@@ -173,7 +146,7 @@ public class CPU {
     ///Puts the value of KK into Vx
     private void loadToRegister()
     {
-        byte kk = (byte)((currentOpcode & 0x00FF));
+        byte kk = (byte)(currentOpcode & 0x00FF);
         byte x = (byte)((currentOpcode & 0x0F00) >> 8);
 
         registers.setVAtAddress(x, kk);
@@ -183,7 +156,7 @@ public class CPU {
     ///Adds the value kk to the value of register Vx, then stores the result in Vx.
     private void addOnRegister()
     {
-        byte kk = (byte)((currentOpcode & 0x00FF));
+        byte kk = (byte)(currentOpcode & 0x00FF);
         byte x = (byte)((currentOpcode & 0x0F00) >> 8);
         byte xValue = registers.getVAtAddress(x);
         byte sum = (byte) (kk + xValue);

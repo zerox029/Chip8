@@ -441,6 +441,23 @@ class CPUTests {
         assertEquals((byte)0x01, registers.getVAtAddress(0xF));
     }
 
+    ///8XYE
+    ///If the most-significant bit of Vx is 1, then VF is set to 1, otherwise to 0. Then Vx is multiplied by 2.
+    @Test
+    void shl() throws UnknownOpcodeException
+    {
+        registers.resetAllRegisters();
+
+        registers.setVAtAddress(0x0, (byte)0xFF);
+
+        memory.setMemoryAtAddress((short) 0x200, (byte)0x80);
+        memory.setMemoryAtAddress((short) 0x201, (byte)0xAE);
+        cpu.fetchOpcode();
+        cpu.decodeAndRunOpcode();
+
+        assertEquals((byte)0xFE, registers.getVAtAddress(0x0));
+        assertEquals((byte)0x01, registers.getVAtAddress(0xF));
+    }
 
     ///ANNN
     ///Sets I to the address NNN.

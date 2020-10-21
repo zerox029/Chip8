@@ -78,6 +78,7 @@ public class CPU {
                 else if(getCurrentOpcodeLastDigit() == 0x5) { sub(); }
                 else if(getCurrentOpcodeLastDigit() == 0x6) { shr(); }
                 else if(getCurrentOpcodeLastDigit() == 0x7) { subn(); }
+                else if(getCurrentOpcodeLastDigit() == 0xE) { shl(); }
                 break;
             case (short)0xA000:
                 loadToI();
@@ -275,6 +276,20 @@ public class CPU {
 
         byte result = (byte) (vx - vy);
         registers.setVAtAddress(getX(), result);
+    }
+
+    ///8XYE
+    ///If the most-significant bit of Vx is 1, then VF is set to 1, otherwise to 0. Then Vx is multiplied by 2.
+    private void shl()
+    {
+        byte msb = (byte)(registers.getVAtAddress(getX()) & (byte)0x80);
+        byte vx = registers.getVAtAddress(getX());
+        int uSign_vx = byteToUnsignedInt(vx);
+
+        if(msb != 0) { msb = (byte)0x01; }
+
+        registers.setVAtAddress(0xF, msb);
+        registers.setVAtAddress(getX(), (byte)(uSign_vx << 1));
     }
 
     ///ANNN

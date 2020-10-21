@@ -69,8 +69,9 @@ public class CPU {
                 addOnRegister();
                 break;
             case (short)0x8000:
-                if(getCurrentOpcodeLastDigit()== 0x0000) { duplicateRegister(); }
-                else if(getCurrentOpcodeLastDigit() == 0x0004) { addToRegCarry(); }
+                if(getCurrentOpcodeLastDigit()== 0x0) { duplicateRegister(); }
+                else if(getCurrentOpcodeLastDigit() == 0x1) { orRegister(); }
+                else if(getCurrentOpcodeLastDigit() == 0x4) { addToRegCarry(); }
                 break;
             case (short)0xA000:
                 loadToI();
@@ -171,6 +172,17 @@ public class CPU {
         registers.setVAtAddress(getX(), yValue);
     }
 
+    ///8XY1
+    ///Performs a bitwise OR on the values of Vx and Vy, then stores the result in Vx
+    private void orRegister()
+    {
+        byte xValue = registers.getVAtAddress(getX());
+        byte yValue = registers.getVAtAddress(getY());
+        byte orResult = (byte) (xValue | yValue);
+
+        registers.setVAtAddress(getX(), orResult);
+    }
+
     ///8XY4
     ///The values of Vx and Vy are added together. If the result is greater than 8 bits (i.e., > 255,) VF is set to 1,
     ///otherwise 0. Only the lowest 8 bits of the result are kept, and stored in Vx
@@ -227,8 +239,7 @@ public class CPU {
     ///Taken from ismael rodriguez's implementation
     private void loadVXasBCDtoMemory()
     {
-        byte x = (byte)((currentOpcode & 0x0F00) >> 8);
-        byte vx = registers.getVAtAddress(x);
+        byte vx = registers.getVAtAddress(getX());
         int uSign_vx = vx & 0xFF;
 
         int hundreds = uSign_vx / 100;

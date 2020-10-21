@@ -32,12 +32,19 @@ public class CPU {
         registers.setPC((short)(registers.getPC() + 0x2));
     }
 
+    private short getCurrentOpcodeFirstDigit() { return (short)(currentOpcode & 0xF000); }
+    private short getCurrentOpcodeLastDigit() { return (short)(currentOpcode & 0x000F); }
+    private short getNNN() { return (short)(currentOpcode & 0x0FFF); }
+    private byte getKK() { return (byte)(currentOpcode & 0x00FF); }
+    private byte getX() { return (byte)((currentOpcode & 0x0F00) >> 8); }
+    private byte getY() { return (byte)((currentOpcode & 0x00F0) >> 4); }
+
     public void decodeAndRunOpcode() throws UnknownOpcodeException
     {
-        switch(currentOpcode & 0xF000)
+        switch(getCurrentOpcodeFirstDigit())
         {
             case 0x0000:
-                if((currentOpcode & 0x000F) == 0x000E) { ret(); }
+                if(getCurrentOpcodeLastDigit() == 0x000E) { ret(); }
                 break;
             case 0x1000:
                 jump();
@@ -60,15 +67,15 @@ public class CPU {
             case 0x7000:
                 addOnRegister();
                 break;
-            case 0x8000:
-                if((currentOpcode & 0x000F) == 0x0000) { duplicateRegister(); }
-                else if((currentOpcode & 0x000F) == 0x0004) { addToRegCarry(); }
+            case (short)0x8000:
+                if(getCurrentOpcodeLastDigit()== 0x0000) { duplicateRegister(); }
+                else if(getCurrentOpcodeLastDigit() == 0x0004) { addToRegCarry(); }
                 break;
-            case 0xA000:
+            case (short)0xA000:
                 loadToI();
                 break;
-            case 0xF000:
-                if((currentOpcode & 0x00FF) == 0x0033) { loadVXasBCDtoMemory(); }
+            case (short)0xF000:
+                if(getCurrentOpcodeLastDigit() == 0x0003) { loadVXasBCDtoMemory(); }
                 break;
 
             default:
@@ -91,53 +98,43 @@ public class CPU {
     ///Sets the PC to NNN
     private void jump()
     {
-        short value = (short)(currentOpcode & 0x0FFF);
-
-        registers.setPC(value);
+        registers.setPC(getNNN());
     }
 
     ///2NNN
     ///Calls Calls subroutine at NNN
     private void call()
     {
-        short value = (short)(currentOpcode & 0x0FFF); //set value to NNN
-
         registers.setSP((byte)(registers.getSP() + 1));
         memory.setStackAtValue(registers.getSP(), registers.getPC());
 
-        registers.setPC(value);
+        registers.setPC(getNNN());
     }
 
     ///3XKK
     ///Compares register Vx to kk, if they are equal, skip the next instruction
     private void skipOnEqualByte()
     {
-        byte kk = (byte)(currentOpcode & 0x00FF);
-        byte x = (byte)((currentOpcode & 0x0F00) >> 8);
-        byte xValue = registers.getVAtAddress(x);
+        byte xValue = registers.getVAtAddress(getX());
 
-        if(kk == xValue) { registers.setPC((short) (registers.getPC() + 0x2)); }
+        if(getKK() == xValue) { registers.setPC((short) (registers.getPC() + 0x2)); }
     }
 
     ///4XKK
     ///Compares register Vx to kk, if they are equal, skip the next instruction
     private void skipOnNonEqualByte()
     {
-        byte kk = (byte)(currentOpcode & 0x00FF);
-        byte x = (byte)((currentOpcode & 0x0F00) >> 8);
-        byte xValue = registers.getVAtAddress(x);
+        byte xValue = registers.getVAtAddress(getX());
 
-        if(kk != xValue) { registers.setPC((short) (registers.getPC() + 0x2)); }
+        if(getKK() != xValue) { registers.setPC((short) (registers.getPC() + 0x2)); }
     }
 
     ///5XY0
     ///Compares register Vx to Vy, if equal, skip the next instruction
     private void skipOnEqualRegister()
     {
-        byte x = (byte)((currentOpcode & 0x0F00) >> 8);
-        byte y = (byte)((currentOpcode & 0x00F0) >> 4);
-        short xValue = registers.getVAtAddress(x);
-        short yValue = registers.getVAtAddress(y);
+        short xValue = registers.getVAtAddress(getX());
+        short yValue = registers.getVAtAddress(getY());
 
         if(xValue == yValue) { registers.setPC((short) (registers.getPC() + 0x2)); }
     }
@@ -146,20 +143,16 @@ public class CPU {
     ///Puts the value of KK into Vx
     private void loadToRegister()
     {
-        byte kk = (byte)(currentOpcode & 0x00FF);
-        byte x = (byte)((currentOpcode & 0x0F00) >> 8);
-
-        registers.setVAtAddress(x, kk);
+        registers.setVAtAddress(getX(), getKK());
     }
 
     ///7XKK
     ///Adds the value kk to the value of register Vx, then stores the result in Vx.
     private void addOnRegister()
     {
-        byte kk = (byte)(currentOpcode & 0x00FF);
-        byte x = (byte)((currentOpcode & 0x0F00) >> 8);
+        byte x = getX();
         byte xValue = registers.getVAtAddress(x);
-        byte sum = (byte) (kk + xValue);
+        byte sum = (byte) (getKK() + xValue);
 
         registers.setVAtAddress(x, sum);
     }
@@ -168,11 +161,9 @@ public class CPU {
     ///Stores the value of register Vy in register Vx.
     private void duplicateRegister()
     {
-        byte x = (byte)((currentOpcode & 0x0F00) >> 8);
-        byte y = (byte)((currentOpcode & 0x00F0) >> 4);
-        byte yValue = registers.getVAtAddress(y);
+        byte yValue = registers.getVAtAddress(getY());
 
-        registers.setVAtAddress(x, yValue);
+        registers.setVAtAddress(getX(), yValue);
     }
 
     ///8XY4
@@ -180,8 +171,8 @@ public class CPU {
     ///otherwise 0. Only the lowest 8 bits of the result are kept, and stored in Vx
     private void addToRegCarry()
     {
-        byte x = (byte)((currentOpcode & 0x0F00) >> 8);
-        byte y = (byte)((currentOpcode & 0x00F0) >> 4);
+        byte x = getX();
+        byte y = getY();
 
         int uSign_xValue = registers.getVAtAddress(x) & 0xff;
         int uSign_yValue = registers.getVAtAddress(y) & 0xff;
@@ -203,8 +194,7 @@ public class CPU {
     ///Sets I to the address NNN.
     private void loadToI()
     {
-        short value = (short)(currentOpcode & 0x0FFF);
-        registers.setI(value);
+        registers.setI(getNNN());
     }
 
     ///FX33

@@ -459,6 +459,42 @@ class CPUTests {
         assertEquals((byte)0x01, registers.getVAtAddress(0xF));
     }
 
+    ///9XY0
+    ///If the most-significant bit of Vx is 1, then VF is set to 1, otherwise to 0. Then Vx is multiplied by 2.
+    @Test
+    void sneRegisterSkip() throws UnknownOpcodeException
+    {
+        registers.resetAllRegisters();
+
+        registers.setVAtAddress(0x0, (byte)0xAA);
+        registers.setVAtAddress(0x1, (byte)0x2F);
+
+        memory.setMemoryAtAddress((short) 0x200, (byte)0x90);
+        memory.setMemoryAtAddress((short) 0x201, (byte)0x10);
+        cpu.fetchOpcode();
+        cpu.decodeAndRunOpcode();
+
+        assertEquals(0x202, registers.getPC());
+    }
+
+    ///9XY0
+    ///If the most-significant bit of Vx is 1, then VF is set to 1, otherwise to 0. Then Vx is multiplied by 2.
+    @Test
+    void sneRegisterNoSkip() throws UnknownOpcodeException
+    {
+        registers.resetAllRegisters();
+
+        registers.setVAtAddress(0x0, (byte)0xAA);
+        registers.setVAtAddress(0x1, (byte)0xAA);
+
+        memory.setMemoryAtAddress((short) 0x200, (byte)0x90);
+        memory.setMemoryAtAddress((short) 0x201, (byte)0x10);
+        cpu.fetchOpcode();
+        cpu.decodeAndRunOpcode();
+
+        assertEquals(0x200, registers.getPC());
+    }
+
     ///ANNN
     ///Sets I to the address NNN.
     @Test

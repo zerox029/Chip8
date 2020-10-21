@@ -1,5 +1,6 @@
 package chip8;
 
+import com.sun.tools.jconsole.JConsoleContext;
 import exceptions.UnknownOpcodeException;
 
 public class CPU {
@@ -79,6 +80,9 @@ public class CPU {
                 else if(getCurrentOpcodeLastDigit() == 0x6) { shr(); }
                 else if(getCurrentOpcodeLastDigit() == 0x7) { subn(); }
                 else if(getCurrentOpcodeLastDigit() == 0xE) { shl(); }
+                break;
+            case (short)0x9000:
+                sneRegister();
                 break;
             case (short)0xA000:
                 loadToI();
@@ -290,6 +294,17 @@ public class CPU {
 
         registers.setVAtAddress(0xF, msb);
         registers.setVAtAddress(getX(), (byte)(uSign_vx << 1));
+    }
+
+    ///9XY0
+    ///The values of Vx and Vy are compared, and if they are not equal, the PC is increased by 2.
+    private void sneRegister()
+    {
+        byte vx = registers.getVAtAddress(getX());
+        byte vy = registers.getVAtAddress(getY());
+
+        System.out.println(registers.getPC());
+        if(vx != vy) { registers.setPC((short) (registers.getPC() + 0x2)); }
     }
 
     ///ANNN

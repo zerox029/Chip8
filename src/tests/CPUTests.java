@@ -347,6 +347,63 @@ class CPUTests {
         assertEquals(0, registers.getVAtAddress(0xF));
     }
 
+    ///8XY5
+    ///If Vx > Vy, then VF is set to 1, otherwise 0. Then Vy is subtracted from Vx, and the results stored in Vx
+    @Test
+    void subIsGreater() throws UnknownOpcodeException
+    {
+        registers.resetAllRegisters();
+
+        registers.setVAtAddress(0x3, (byte)0x5);
+        registers.setVAtAddress(0xA, (byte)0x2);
+
+        memory.setMemoryAtAddress((short) 0x200, (byte)0x83);
+        memory.setMemoryAtAddress((short) 0x201, (byte)0xA5);
+        cpu.fetchOpcode();
+        cpu.decodeAndRunOpcode();
+
+        assertEquals(0x3, registers.getVAtAddress(0x3));
+        assertEquals(0x1, registers.getVAtAddress(0xF));
+    }
+
+    ///8XY5
+    ///If Vx > Vy, then VF is set to 1, otherwise 0. Then Vy is subtracted from Vx, and the results stored in Vx
+    @Test
+    void subIsSmaller() throws UnknownOpcodeException
+    {
+        registers.resetAllRegisters();
+
+        registers.setVAtAddress(0x3, (byte)0x1);
+        registers.setVAtAddress(0xA, (byte)0xA);
+
+        memory.setMemoryAtAddress((short) 0x200, (byte)0x83);
+        memory.setMemoryAtAddress((short) 0x201, (byte)0xA5);
+        cpu.fetchOpcode();
+        cpu.decodeAndRunOpcode();
+
+        assertEquals((byte)0xF7, registers.getVAtAddress(0x3));
+        assertEquals((byte)0x00, registers.getVAtAddress(0xF));
+    }
+
+    ///8XY6
+    ///Shifts VX right by one. VF is set to the value of the least significant bit of VX before the shift.
+    @Test
+    void shr() throws UnknownOpcodeException
+    {
+        registers.resetAllRegisters();
+
+        registers.setVAtAddress(0x0, (byte)0xFF);
+
+        memory.setMemoryAtAddress((short) 0x200, (byte)0x80);
+        memory.setMemoryAtAddress((short) 0x201, (byte)0xA6);
+        cpu.fetchOpcode();
+        cpu.decodeAndRunOpcode();
+
+        assertEquals((byte)0x7F, registers.getVAtAddress(0x0));
+        assertEquals((byte)0x01, registers.getVAtAddress(0xF));
+    }
+
+
     ///ANNN
     ///Sets I to the address NNN.
     @Test

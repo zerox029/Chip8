@@ -74,6 +74,9 @@ public class CPU {
             case (short)0xA000:
                 loadToI();
                 break;
+            case (short)0xB000:
+                jumpSum();
+                break;
             case (short)0xF000:
                 if(getCurrentOpcodeLastDigit() == 0x0003) { loadVXasBCDtoMemory(); }
                 break;
@@ -195,6 +198,17 @@ public class CPU {
     private void loadToI()
     {
         registers.setI(getNNN());
+    }
+
+    ///BNNN
+    ///Jump to location NNN + V0
+    //The PC is set to NNN plus the value of V0.
+    private void jumpSum()
+    {
+        int uSign_v0 = registers.getVAtAddress(0) & 0xFF;
+        int uSign_nnn = getNNN() & 0xFFF;
+
+        registers.setPC((short)(uSign_nnn + uSign_v0));
     }
 
     ///FX33

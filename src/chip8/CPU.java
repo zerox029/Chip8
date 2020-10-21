@@ -45,7 +45,7 @@ public class CPU {
         switch(getCurrentOpcodeFirstDigit())
         {
             case 0x0000:
-                if(getCurrentOpcodeLastDigit() == 0x000E) { ret(); }
+                if(getCurrentOpcodeLastDigit() == 0xE) { ret(); }
                 break;
             case 0x1000:
                 jump();
@@ -72,6 +72,7 @@ public class CPU {
                 if(getCurrentOpcodeLastDigit()== 0x0) { duplicateRegister(); }
                 else if(getCurrentOpcodeLastDigit() == 0x1) { orRegister(); }
                 else if(getCurrentOpcodeLastDigit() == 0x2) { andRegister(); }
+                else if(getCurrentOpcodeLastDigit() == 0x3) { xorRegister(); }
                 else if(getCurrentOpcodeLastDigit() == 0x4) { addToRegCarry(); }
                 break;
             case (short)0xA000:
@@ -81,8 +82,8 @@ public class CPU {
                 jumpSum();
                 break;
             case (short)0xF000:
-                if(getCurrentOpcodeLastTwoDigit() == 0x0015) { loadRegisterOnDT(); }
-                else if(getCurrentOpcodeLastTwoDigit() == 0x0033) { loadVXasBCDtoMemory(); }
+                if(getCurrentOpcodeLastTwoDigit() == 0x15) { loadRegisterOnDT(); }
+                else if(getCurrentOpcodeLastTwoDigit() == 0x33) { loadVXasBCDtoMemory(); }
                 break;
 
             default:
@@ -190,9 +191,20 @@ public class CPU {
     {
         byte xValue = registers.getVAtAddress(getX());
         byte yValue = registers.getVAtAddress(getY());
-        byte orResult = (byte) (xValue & yValue);
+        byte andResult = (byte) (xValue & yValue);
 
-        registers.setVAtAddress(getX(), orResult);
+        registers.setVAtAddress(getX(), andResult);
+    }
+
+    ///8XY3
+    ///Performs a bitwise exclusive OR on the values of Vx and Vy, then stores the result in Vx
+    private void xorRegister()
+    {
+        byte xValue = registers.getVAtAddress(getX());
+        byte yValue = registers.getVAtAddress(getY());
+        byte xorResult = (byte) (xValue ^ yValue);
+
+        registers.setVAtAddress(getX(), xorResult);
     }
 
     ///8XY4

@@ -289,6 +289,24 @@ class CPUTests {
         assertEquals(0x3, registers.getVAtAddress(0x2));
     }
 
+    ///8XY3
+    ///Performs a bitwise exclusive OR on the values of Vx and Vy, then stores the result in Vx
+    @Test
+    void xorRegister() throws UnknownOpcodeException
+    {
+        registers.resetAllRegisters();
+
+        registers.setVAtAddress(0x2, (byte) 0xB);
+        registers.setVAtAddress(0xA, (byte) 0x3);
+
+        memory.setMemoryAtAddress((short) 0x200, (byte)0x82);
+        memory.setMemoryAtAddress((short) 0x201, (byte)0xA3);
+        cpu.fetchOpcode();
+        cpu.decodeAndRunOpcode();
+
+        assertEquals(0x8, registers.getVAtAddress(0x2));
+    }
+
     ///8XY4
     ///The values of Vx and Vy are added together. If the result is greater than 8 bits (i.e., > 255,) VF is set to 1,
     ///otherwise 0. Only the lowest 8 bits of the result are kept, and stored in Vx

@@ -34,6 +34,7 @@ public class CPU {
 
     private short getCurrentOpcodeFirstDigit() { return (short)(currentOpcode & 0xF000); }
     private short getCurrentOpcodeLastDigit() { return (short)(currentOpcode & 0x000F); }
+    private short getCurrentOpcodeLastTwoDigit() { return (short)(currentOpcode & 0x00FF); }
     private short getNNN() { return (short)(currentOpcode & 0x0FFF); }
     private byte getKK() { return (byte)(currentOpcode & 0x00FF); }
     private byte getX() { return (byte)((currentOpcode & 0x0F00) >> 8); }
@@ -78,7 +79,8 @@ public class CPU {
                 jumpSum();
                 break;
             case (short)0xF000:
-                if(getCurrentOpcodeLastDigit() == 0x0003) { loadVXasBCDtoMemory(); }
+                if(getCurrentOpcodeLastTwoDigit() == 0x0015) { loadRegisterOnDT(); }
+                else if(getCurrentOpcodeLastTwoDigit() == 0x0033) { loadVXasBCDtoMemory(); }
                 break;
 
             default:
@@ -209,6 +211,15 @@ public class CPU {
         int uSign_nnn = getNNN() & 0xFFF;
 
         registers.setPC((short)(uSign_nnn + uSign_v0));
+    }
+
+    ///FX15
+    ///DT is set equal to the value of Vx.
+    private void loadRegisterOnDT()
+    {
+        byte xValue = registers.getVAtAddress(getX());
+
+        registers.setDT(xValue);
     }
 
     ///FX33

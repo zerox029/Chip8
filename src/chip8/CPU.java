@@ -77,6 +77,7 @@ public class CPU {
                 else if(getCurrentOpcodeLastDigit() == 0x4) { addToRegCarry(); }
                 else if(getCurrentOpcodeLastDigit() == 0x5) { sub(); }
                 else if(getCurrentOpcodeLastDigit() == 0x6) { shr(); }
+                else if(getCurrentOpcodeLastDigit() == 0x7) { subn(); }
                 break;
             case (short)0xA000:
                 loadToI();
@@ -252,13 +253,28 @@ public class CPU {
     ///Shifts VX right by one. VF is set to the value of the least significant bit of VX before the shift.
     private void shr()
     {
-        byte x = getX();
         byte lsb = (byte)(registers.getVAtAddress(getX()) & (byte)0x01);
         byte vx = registers.getVAtAddress(getX());
         int uSign_vx = byteToUnsignedInt(vx);
 
         registers.setVAtAddress(0xF, lsb);
         registers.setVAtAddress(getX(), (byte)(uSign_vx >>> 1));
+    }
+
+    ///8XY7
+    ///If Vy > Vx, then VF is set to 1, otherwise 0. Then Vx is subtracted from Vy, and the results stored in Vx
+    private void subn()
+    {
+        byte vx = registers.getVAtAddress(getX());
+        byte vy = registers.getVAtAddress(getY());
+        int uSign_vx = byteToUnsignedInt(vx);
+        int uSign_vy = byteToUnsignedInt(vy);
+
+        if(uSign_vy > uSign_vx) { registers.setVAtAddress(0xF, (byte) 0x1); }
+        else { registers.setVAtAddress(0xF, (byte) 0x0); }
+
+        byte result = (byte) (vx - vy);
+        registers.setVAtAddress(getX(), result);
     }
 
     ///ANNN

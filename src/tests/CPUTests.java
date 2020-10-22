@@ -528,6 +528,25 @@ class CPUTests {
         assertEquals(0x67B, registers.getPC());
     }
 
+    ///CXKK
+    ///Generates a random byte and ANDs it to KK. Stores the result in Vx
+    @Test
+    void rand() throws UnknownOpcodeException
+    {
+        registers.resetAllRegisters();
+
+        cpu.toggleRandom();
+
+        memory.setMemoryAtAddress((short) 0x200, (byte)0xC0);
+        memory.setMemoryAtAddress((short) 0x201, (byte)0xDC);
+        cpu.fetchOpcode();
+        cpu.decodeAndRunOpcode();
+
+        cpu.toggleRandom();
+
+        assertEquals(0x4C, registers.getVAtAddress(0x0));
+    }
+
     ///FX15
     ///DT is set equal to the value of Vx.
     @Test

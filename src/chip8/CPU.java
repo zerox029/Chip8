@@ -1,6 +1,6 @@
 package chip8;
 
-import com.sun.tools.jconsole.JConsoleContext;
+import java.util.Random;
 import exceptions.UnknownOpcodeException;
 
 public class CPU {
@@ -10,10 +10,15 @@ public class CPU {
 
     private short currentOpcode;
 
+    private boolean randomEnabled = true;
+    private Random random;
+
     public CPU(Memory memory, Registers registers)
     {
         this.memory = memory;
         this.registers = registers;
+
+        this.random = new Random();
     }
 
     public short getCurrentOpcode() { return currentOpcode; }
@@ -41,6 +46,8 @@ public class CPU {
     private byte getX() { return (byte)((currentOpcode & 0x0F00) >> 8); }
     private byte getY() { return (byte)((currentOpcode & 0x00F0) >> 4); }
     private int byteToUnsignedInt(byte val) { return val & 0xFF; }
+
+    public void toggleRandom() { randomEnabled ^= true; }
 
     public void decodeAndRunOpcode() throws UnknownOpcodeException
     {
@@ -89,6 +96,9 @@ public class CPU {
                 break;
             case (short)0xB000:
                 jumpSum();
+                break;
+            case (short)0xC000:
+                rand();
                 break;
             case (short)0xF000:
                 if(getCurrentOpcodeLastTwoDigit() == 0x15) { loadRegisterOnDT(); }
@@ -326,6 +336,17 @@ public class CPU {
         int uSign_nnn = getNNN() & 0xFFF;
 
         registers.setPC((short)(uSign_nnn + uSign_v0));
+    }
+
+    ///CXKK
+    ///Generates a random byte and ANDs it to KK. Stores the result in Vx
+    private void rand()
+    {
+        byte rnd = (byte)random.nextInt(256);
+
+        if(!randomEnabled) { rnd = 0x4E; }
+
+        registers.setVAtAddress(getX(), (byte)(rnd & getKK()));
     }
 
     ///FX15

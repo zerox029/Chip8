@@ -3,13 +3,15 @@ package chip8;
 public class Utils {
     public static final int MEMORY_SIZE = 4096;
     public static final int STACK_SIZE = 16;
+    public static final int SCREEN_WIDTH = 64;
+    public static final int SCREEN_HEIGHT = 32;
 
     public static final short FIRST_PROGRAM_SPACE_ADDRESS = 0x200;
     public static final short MAX_MEMORY_ADDRESS = 0xFFF;
 
     public static final String ROMS_PATH = "roms/";
 
-    public static final short spritesStorageStartingAddress = 0x000;
+    public static final short SPRITES_STORAGE_STARTING_ADDRESS = 0x000;
 
     //Number sprites
     public static final byte[] sprite_0 = new byte[]{(byte)0xF0,(byte)0x90,(byte)0x90,(byte)0x90,(byte)0xF0};

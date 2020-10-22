@@ -101,7 +101,8 @@ public class CPU {
                 rand();
                 break;
             case (short)0xF000:
-                if(getCurrentOpcodeLastTwoDigit() == 0x15) { loadRegisterOnDT(); }
+                if(getCurrentOpcodeLastTwoDigit() == 0x07) { loadDTOnRegister(); }
+                else if(getCurrentOpcodeLastTwoDigit() == 0x15) { loadRegisterOnDT(); }
                 else if(getCurrentOpcodeLastTwoDigit() == 0x18) { loadRegisterOnST(); }
                 else if(getCurrentOpcodeLastTwoDigit() == 0x1E) { addRegisterToI(); }
                 else if(getCurrentOpcodeLastTwoDigit() == 0x33) { loadVXasBCDtoMemory(); }
@@ -347,6 +348,13 @@ public class CPU {
         if(!randomEnabled) { rnd = 0x4E; }
 
         registers.setVAtAddress(getX(), (byte)(rnd & getKK()));
+    }
+
+    ///FX07
+    ///The value of DT is placed into Vx.
+    private void loadDTOnRegister()
+    {
+        registers.setVAtAddress(getX(), registers.getDT());
     }
 
     ///FX15

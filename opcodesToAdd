@@ -1,5 +1,4 @@
-[]0nnn
-[]00e0
+[]00e0 - display
 [x]00ee
 [x]1nnn
 [x]2nnn
@@ -20,16 +19,16 @@
 [x]9xy0
 [x]annn
 [x]bnnn
-[]cxkk
-[]dxyn
-[]ex9e
-[]exa1
-[]fx07
-[]fx0a
+[x]cxkk
+[]dxyn - display
+[]ex9e - key
+[]exa1 - key
+[x]fx07
+[]fx0a - key
 [x]fx15
 [x]fx18
 [x]fx1e
-[]fx29
+[]fx29 - display
 [x]fx33
-[]fx55
-[]fx65
+[]fx55 - cando
+[]fx65 - cando

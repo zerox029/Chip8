@@ -1,10 +1,10 @@
 package chip8;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 public class Chip8 {
@@ -12,6 +12,7 @@ public class Chip8 {
     private Memory memory;
     private CPU cpu;
     private Display display;
+    private DebugPanel debugPanel;
     private Keyboard keyboard;
 
     private static final Logger LOGGER = Logger.getLogger(Chip8.class.getName());
@@ -23,7 +24,7 @@ public class Chip8 {
         try
         {
             init();
-            loadRom("Random Number Test [Matthew Mikolay, 2010].ch8");
+            loadRom("Keypad Test [Hap, 2006].ch8");
             emulationLoop();
         }
         catch (Exception err)
@@ -38,19 +39,23 @@ public class Chip8 {
         memory = new Memory();
         keyboard = new Keyboard();
         cpu = new CPU(memory, registers, keyboard);
-        createDisplay(memory);
+        createDisplay();
 
         running = true;
     }
 
-    private void createDisplay(Memory memory)
+    private void createDisplay()
     {
         display = new Display(memory);
+        debugPanel = new DebugPanel(memory, registers, keyboard, cpu);
+
         JFrame frame = new JFrame("Chip8");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.add(display);
+        frame.add(display, BorderLayout.NORTH);
+        frame.add(debugPanel, BorderLayout.SOUTH);
         frame.pack();
         frame.setResizable(false);
+        frame.setBackground(Utils.WINDOW_COLOR);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
@@ -92,6 +97,7 @@ public class Chip8 {
                 refreshCycles = 0;
 
                 display.paintScreen();
+                debugPanel.paintScreen();
                 registers.setDT((byte) (registers.getDT() - 0x01));
 
                 //Sound stuff

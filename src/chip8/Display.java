@@ -31,6 +31,7 @@ public class Display extends JPanel {
 
     private void fillScreen()
     {
+        //Chip8 display
         for(byte x = 0; x < Utils.SCREEN_WIDTH; x++)
         {
             for(byte y = 0; y < Utils.SCREEN_HEIGHT; y++)

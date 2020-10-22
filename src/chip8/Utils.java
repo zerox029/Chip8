@@ -9,8 +9,12 @@ public class Utils {
     public static final int SCREEN_HEIGHT = 32;
     public static final int SCREEN_SCALE = 10;
 
+    public static final int DEBUG_PANEL_WIDTH = 640;
+    public static final int DEBUG_PANEL_HEIGHT = 100;
+
     public static final Color ON_COLOR = Color.white;
     public static final Color OFF_COLOR = Color.black;
+    public static final Color WINDOW_COLOR = new Color(48, 48, 48);
 
     public static final short FIRST_PROGRAM_SPACE_ADDRESS = 0x200;
     public static final short MAX_MEMORY_ADDRESS = 0xFFF;

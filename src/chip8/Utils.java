@@ -19,6 +19,10 @@ public class Utils {
 
     public static final short SPRITES_STORAGE_STARTING_ADDRESS = 0x000;
 
+    public static final int CPU_FREQUENCY = 500;
+    public static final int PERIOD_NANOSECONDS = 1000000000 / CPU_FREQUENCY; //2 000 000
+    public static final int CYCLES_FOR_REFRESHING = CPU_FREQUENCY / 60; //8.3333
+
     //Number sprites
     public static final byte[] sprite_0 = new byte[]{(byte)0xF0,(byte)0x90,(byte)0x90,(byte)0x90,(byte)0xF0};
     public static final byte[] sprite_1 = new byte[]{(byte)0x20,(byte)0x60,(byte)0x20,(byte)0x20,(byte)0x70};

@@ -117,7 +117,7 @@ public class CPU {
                 break;
 
             default:
-                throw new UnknownOpcodeException();
+                throw new UnknownOpcodeException(String.format("0x%04X", currentOpcode));
         }
     }
 

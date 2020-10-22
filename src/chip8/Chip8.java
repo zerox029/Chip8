@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 public class Chip8 {
@@ -15,12 +16,14 @@ public class Chip8 {
 
     private static final Logger LOGGER = Logger.getLogger(Chip8.class.getName());
 
+    private boolean running;
+
     public Chip8()
     {
         try
         {
             init();
-            loadRom("IBM Logo.ch8");
+            loadRom("Random Number Test [Matthew Mikolay, 2010].ch8");
             emulationLoop();
         }
         catch (Exception err)
@@ -36,6 +39,8 @@ public class Chip8 {
         cpu = new CPU(memory, registers);
         keyboard = new Keyboard();
         createDisplay(memory);
+
+        running = true;
     }
 
     private void createDisplay(Memory memory)
@@ -65,9 +70,55 @@ public class Chip8 {
         LOGGER.info("Successfully loaded rom");
     }
 
-    public void emulationLoop()
+    public void emulationLoop() throws InterruptedException
     {
-        emulateCycle();
+        long startTime;
+        long endTime;
+        long passedTime = 0;
+
+        int emulatedCycles = 0;
+        int refreshCycles = 0;
+
+        while(running)
+        {
+            //TimeUnit.MILLISECONDS.sleep(100);
+
+            startTime = System.nanoTime();
+
+            emulateCycle();
+
+            if(refreshCycles % Utils.CYCLES_FOR_REFRESHING == 0)
+            {
+                refreshCycles = 0;
+
+                display.paintScreen();
+                registers.setDT((byte) (registers.getDT() - 0x01));
+
+                //Sound stuff
+            }
+
+            endTime = System.nanoTime();
+            refreshCycles++;
+
+            waitForEndOfCycle(startTime, endTime);
+        }
+    }
+
+    private void waitForEndOfCycle(long startTime, long endTime)
+    {
+        long nanosecondsToWait = Utils.PERIOD_NANOSECONDS - (endTime - startTime);
+        long initNanoseconds = System.nanoTime();
+        long targetNanoseconds = initNanoseconds + nanosecondsToWait;
+        while(System.nanoTime() < targetNanoseconds)
+        {
+            try
+            {
+                Thread.sleep(0);
+            } catch (InterruptedException e)
+            {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void emulateCycle()
@@ -75,8 +126,9 @@ public class Chip8 {
         try
         {
             cpu.fetchOpcode();
-            cpu.decodeAndRunOpcode();
             cpu.incrementPC();
+            cpu.decodeAndRunOpcode();
+
         }
         catch(Exception e)
         {

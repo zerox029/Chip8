@@ -687,6 +687,21 @@ class CPUTests {
         assertEquals(0x202, registers.getPC());
     }
 
+    ///EXA1
+    ///Skip next instruction if key with the value of Vx is pressed.
+    @Test
+    void skipIfNotPressed() throws UnknownOpcodeException
+    {
+        registers.resetAllRegisters();
+
+        memory.setMemoryAtAddress((short) 0x200, (byte)0xEA);
+        memory.setMemoryAtAddress((short) 0x201, (byte)0xA1);
+        cpu.fetchOpcode();
+        cpu.decodeAndRunOpcode();
+
+        assertEquals(0x202, registers.getPC());
+    }
+
     ///FX07
     ///The value of DT is placed into Vx.
     @Test

@@ -108,7 +108,8 @@ public class CPU {
                 draw();
                 break;
             case (short)0xE000:
-                skipIfPressed();
+                if(getCurrentOpcodeLastTwoDigit() == 0x9E) { skipIfPressed(); }
+                else if(getCurrentOpcodeLastTwoDigit() == 0xA1) { skipIfNotPressed(); }
                 break;
             case (short)0xF000:
                 if(getCurrentOpcodeLastTwoDigit() == 0x07) { loadDTOnRegister(); }
@@ -411,6 +412,13 @@ public class CPU {
     private void skipIfPressed()
     {
         if(keyboard.isKeyPressed(getX())) { registers.setPC((short) (registers.getPC() + 2)); }
+    }
+
+    ///EXA1
+    ///Skip next instruction if key with the value of Vx is not pressed
+    private void skipIfNotPressed()
+    {
+        if(!keyboard.isKeyPressed(getX())) { registers.setPC((short) (registers.getPC() + 2)); }
     }
 
     ///FX07

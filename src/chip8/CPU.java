@@ -54,7 +54,7 @@ public class CPU {
         switch(getCurrentOpcodeFirstDigit())
         {
             case 0x0000:
-                if(getCurrentOpcodeLastDigit() == 0xE) { ret(); }
+                ret();
                 break;
             case 0x1000:
                 jump();
@@ -319,7 +319,6 @@ public class CPU {
         byte vx = registers.getVAtAddress(getX());
         byte vy = registers.getVAtAddress(getY());
 
-        System.out.println(registers.getPC());
         if(vx != vy) { registers.setPC((short) (registers.getPC() + 0x2)); }
     }
 

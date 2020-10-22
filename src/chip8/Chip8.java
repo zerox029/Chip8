@@ -3,7 +3,6 @@ package chip8;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Chip8 {
@@ -11,7 +10,7 @@ public class Chip8 {
     private Memory memory;
     private CPU cpu;
 
-    private final static Logger LOGGER = Logger.getLogger(Chip8.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(Chip8.class.getName());
 
     public Chip8()
     {

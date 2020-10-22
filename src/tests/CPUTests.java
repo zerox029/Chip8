@@ -679,7 +679,6 @@ class CPUTests {
 
         for(byte i = 0x0; i <= 0xF; i++)
         {
-            byte b = registers.getVAtAddress(i);
             assertEquals(i, registers.getVAtAddress(i));
         }
     }

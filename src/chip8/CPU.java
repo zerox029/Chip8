@@ -93,6 +93,7 @@ public class CPU {
             case (short)0xF000:
                 if(getCurrentOpcodeLastTwoDigit() == 0x15) { loadRegisterOnDT(); }
                 else if(getCurrentOpcodeLastTwoDigit() == 0x18) { loadRegisterOnST(); }
+                else if(getCurrentOpcodeLastTwoDigit() == 0x1E) { addRegisterToI(); }
                 else if(getCurrentOpcodeLastTwoDigit() == 0x33) { loadVXasBCDtoMemory(); }
                 break;
 
@@ -331,18 +332,27 @@ public class CPU {
     ///DT is set equal to the value of Vx.
     private void loadRegisterOnDT()
     {
-        byte xValue = registers.getVAtAddress(getX());
+        byte vx = registers.getVAtAddress(getX());
 
-        registers.setDT(xValue);
+        registers.setDT(vx);
     }
 
     ///FX18
     ///ST is set equal to the value of Vx.
     private void loadRegisterOnST()
     {
-        byte xValue = registers.getVAtAddress(getX());
+        byte vx = registers.getVAtAddress(getX());
 
-        registers.setST(xValue);
+        registers.setST(vx);
+    }
+
+    ///FX1E
+    ///ST is set equal to the value of Vx.
+    private void addRegisterToI()
+    {
+        byte vx = registers.getVAtAddress(getX());
+
+        registers.setI((short) (registers.getI() + vx));
     }
 
     ///FX33

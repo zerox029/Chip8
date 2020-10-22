@@ -562,6 +562,24 @@ class CPUTests {
         assertEquals(0x4d, registers.getST());
     }
 
+    ///FX1E
+    ///The values of I and Vx are added, and the results are stored in I.
+    @Test
+    void addRegisterToI() throws UnknownOpcodeException
+    {
+        registers.resetAllRegisters();
+
+        registers.setVAtAddress(0x0, (byte)0x04);
+        registers.setI((short) 0x04);
+
+        memory.setMemoryAtAddress((short) 0x200, (byte)0xF0);
+        memory.setMemoryAtAddress((short) 0x201, (byte)0x1E);
+        cpu.fetchOpcode();
+        cpu.decodeAndRunOpcode();
+
+        assertEquals(0x08, registers.getI());
+    }
+
     ///FX33
     ///Store BCD representation of Vx in memory locations I, I+1, and I+2
     ///Taken from ismael rodriguez's implementation

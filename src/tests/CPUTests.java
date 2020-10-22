@@ -545,6 +545,23 @@ class CPUTests {
         assertEquals(0x4d, registers.getDT());
     }
 
+    ///FX18
+    ///DT is set equal to the value of Vx.
+    @Test
+    void loadRegisterOnST() throws UnknownOpcodeException
+    {
+        registers.resetAllRegisters();
+
+        registers.setVAtAddress(6, (byte)0x4D);
+
+        memory.setMemoryAtAddress((short) 0x200, (byte)0xF6);
+        memory.setMemoryAtAddress((short) 0x201, (byte)0x18);
+        cpu.fetchOpcode();
+        cpu.decodeAndRunOpcode();
+
+        assertEquals(0x4d, registers.getST());
+    }
+
     ///FX33
     ///Store BCD representation of Vx in memory locations I, I+1, and I+2
     ///Taken from ismael rodriguez's implementation

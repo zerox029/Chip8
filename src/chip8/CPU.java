@@ -92,6 +92,7 @@ public class CPU {
                 break;
             case (short)0xF000:
                 if(getCurrentOpcodeLastTwoDigit() == 0x15) { loadRegisterOnDT(); }
+                else if(getCurrentOpcodeLastTwoDigit() == 0x18) { loadRegisterOnST(); }
                 else if(getCurrentOpcodeLastTwoDigit() == 0x33) { loadVXasBCDtoMemory(); }
                 break;
 
@@ -100,6 +101,7 @@ public class CPU {
         }
     }
 
+    //region OPCODES
     ///00EE
     ///Returns from a subroutine
     private void ret()
@@ -334,6 +336,15 @@ public class CPU {
         registers.setDT(xValue);
     }
 
+    ///FX18
+    ///ST is set equal to the value of Vx.
+    private void loadRegisterOnST()
+    {
+        byte xValue = registers.getVAtAddress(getX());
+
+        registers.setST(xValue);
+    }
+
     ///FX33
     ///Store BCD representation of Vx in memory locations I, I+1, and I+2
     ///Taken from ismael rodriguez's implementation
@@ -354,4 +365,5 @@ public class CPU {
         memory.setMemoryAtAddress((short)(registers.getI() + 1), (byte)tens);
         memory.setMemoryAtAddress((short)(registers.getI() + 2), (byte)units);
     }
+    //endregion
 }

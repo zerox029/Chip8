@@ -1,10 +1,16 @@
 package chip8;
 
+import java.awt.*;
+
 public class Utils {
     public static final int MEMORY_SIZE = 4096;
     public static final int STACK_SIZE = 16;
     public static final int SCREEN_WIDTH = 64;
     public static final int SCREEN_HEIGHT = 32;
+    public static final int SCREEN_SCALE = 10;
+
+    public static final Color ON_COLOR = Color.white;
+    public static final Color OFF_COLOR = Color.black;
 
     public static final short FIRST_PROGRAM_SPACE_ADDRESS = 0x200;
     public static final short MAX_MEMORY_ADDRESS = 0xFFF;

@@ -1,5 +1,6 @@
 package chip8;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -9,6 +10,8 @@ public class Chip8 {
     private Registers registers;
     private Memory memory;
     private CPU cpu;
+    private Display display;
+    private Keyboard keyboard;
 
     private static final Logger LOGGER = Logger.getLogger(Chip8.class.getName());
 
@@ -31,6 +34,20 @@ public class Chip8 {
         registers = new Registers();
         memory = new Memory();
         cpu = new CPU(memory, registers);
+        keyboard = new Keyboard();
+        createDisplay(memory);
+    }
+
+    private void createDisplay(Memory memory)
+    {
+        display = new Display(memory);
+        JFrame frame = new JFrame("Chip8");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.add(display);
+        frame.pack();
+        frame.setResizable(false);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
     }
 
     public void loadRom(String title) throws IOException

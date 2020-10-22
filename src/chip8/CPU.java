@@ -106,6 +106,7 @@ public class CPU {
                 else if(getCurrentOpcodeLastTwoDigit() == 0x18) { loadRegisterOnST(); }
                 else if(getCurrentOpcodeLastTwoDigit() == 0x1E) { addRegisterToI(); }
                 else if(getCurrentOpcodeLastTwoDigit() == 0x33) { loadVXasBCDtoMemory(); }
+                else if(getCurrentOpcodeLastTwoDigit() == 0x55) { loadMultipleRegistersToMemory(); }
                 break;
 
             default:
@@ -403,6 +404,16 @@ public class CPU {
         memory.setMemoryAtAddress(registers.getI(), (byte)hundreds);
         memory.setMemoryAtAddress((short)(registers.getI() + 1), (byte)tens);
         memory.setMemoryAtAddress((short)(registers.getI() + 2), (byte)units);
+    }
+
+    ///FX55
+    ///Store registers V0 through Vx in memory starting at location I
+    private void loadMultipleRegistersToMemory()
+    {
+        for(byte reg = 0; reg <= getX(); reg++)
+        {
+            memory.setMemoryAtAddress((short)(registers.getI() + reg), registers.getVAtAddress(reg));
+        }
     }
     //endregion
 }

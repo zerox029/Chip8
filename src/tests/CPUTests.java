@@ -635,4 +635,29 @@ class CPUTests {
         assertEquals(0x1, memory.getMemoryAtAddress((short)(registers.getI() + 1)));
         assertEquals(0x4, memory.getMemoryAtAddress((short)(registers.getI() + 2)));
     }
+
+    ///FX55
+    ///Store registers V0 through Vx in memory starting at location I
+    @Test
+    void loadMultipleRegistersToMemory() throws UnknownOpcodeException
+    {
+        registers.resetAllRegisters();
+
+        for(byte p = 0x0; p <= 0xF; p++)
+        {
+            registers.setVAtAddress(p, p);
+        }
+
+        registers.setI((short) 0x200);
+
+        memory.setMemoryAtAddress((short) 0x200, (byte)0xFF);
+        memory.setMemoryAtAddress((short) 0x201, (byte)0x55);
+        cpu.fetchOpcode();
+        cpu.decodeAndRunOpcode();
+
+        for(byte p = 0x0; p <= 0xF; p++)
+        {
+            assertEquals(p, memory.getMemoryAtAddress((short) (registers.getI() + p)));
+        }
+    }
 }

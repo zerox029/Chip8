@@ -1,18 +1,19 @@
 package tests;
 
-import chip8.CPU;
-import chip8.Memory;
-import chip8.Registers;
-import chip8.Utils;
+import chip8.*;
 import exceptions.UnknownOpcodeException;
 import org.junit.jupiter.api.Test;
+
+import java.security.Key;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class CPUTests {
 
     Memory memory = new Memory();
     Registers registers = new Registers();
-    CPU cpu = new CPU(memory, registers);
+    Keyboard keyboard = new Keyboard();
+    CPU cpu = new CPU(memory, registers, keyboard);
 
     @Test
     void fetchOpcode()
@@ -667,6 +668,23 @@ class CPUTests {
         assertTrue(isSameByte((byte)0xF0,62,2));
         assertTrue(isSameByte((byte)0x90,62,3));
         assertTrue(isSameByte((byte)0x90,62,4));
+    }
+
+    ///EX9E
+    ///Skip next instruction if key with the value of Vx is pressed.
+    @Test
+    void skipIfPressed() throws UnknownOpcodeException
+    {
+        registers.resetAllRegisters();
+
+        keyboard.toggleKeyPressed((byte) 0xA);
+
+        memory.setMemoryAtAddress((short) 0x200, (byte)0xEA);
+        memory.setMemoryAtAddress((short) 0x201, (byte)0x9E);
+        cpu.fetchOpcode();
+        cpu.decodeAndRunOpcode();
+
+        assertEquals(0x202, registers.getPC());
     }
 
     ///FX07

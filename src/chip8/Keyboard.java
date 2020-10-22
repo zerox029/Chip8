@@ -4,6 +4,7 @@ import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
 import java.security.Key;
+import java.util.Arrays;
 
 public class Keyboard {
     private boolean[] pressedKeys;
@@ -15,6 +16,10 @@ public class Keyboard {
         pressedKeys = new boolean[16];
         setUpListeners();
     }
+
+    public byte getLastPressed() { return lastPressed; }
+    public boolean isKeyPressed(byte keyValue) { return pressedKeys[keyValue]; }
+    public void toggleKeyPressed(byte keyValue) { pressedKeys[keyValue] ^= true; }
 
     //https://stackoverflow.com/questions/18037576/how-do-i-check-if-the-user-is-pressing-a-key
     private void setUpListeners()

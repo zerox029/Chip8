@@ -7,16 +7,18 @@ public class CPU {
 
     private Memory memory;
     private Registers registers;
+    private Keyboard keyboard;
 
     private short currentOpcode;
 
     private boolean randomEnabled = true;
     private Random random;
 
-    public CPU(Memory memory, Registers registers)
+    public CPU(Memory memory, Registers registers, Keyboard keyboard)
     {
         this.memory = memory;
         this.registers = registers;
+        this.keyboard = keyboard;
 
         this.random = new Random();
     }
@@ -104,6 +106,9 @@ public class CPU {
                 break;
             case (short)0xD000:
                 draw();
+                break;
+            case (short)0xE000:
+                skipIfPressed();
                 break;
             case (short)0xF000:
                 if(getCurrentOpcodeLastTwoDigit() == 0x07) { loadDTOnRegister(); }
@@ -399,6 +404,13 @@ public class CPU {
         }
 
         registers.setVAtAddress(0xF, vf);
+    }
+
+    ///EX9E
+    ///Skip next instruction if key with the value of Vx is pressed.
+    private void skipIfPressed()
+    {
+        if(keyboard.isKeyPressed(getX())) { registers.setPC((short) (registers.getPC() + 2)); }
     }
 
     ///FX07

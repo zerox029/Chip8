@@ -36,8 +36,8 @@ public class Chip8 {
     {
         registers = new Registers();
         memory = new Memory();
-        cpu = new CPU(memory, registers);
         keyboard = new Keyboard();
+        cpu = new CPU(memory, registers, keyboard);
         createDisplay(memory);
 
         running = true;

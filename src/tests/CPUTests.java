@@ -643,21 +643,44 @@ class CPUTests {
     {
         registers.resetAllRegisters();
 
-        for(byte p = 0x0; p <= 0xF; p++)
+        for(byte i = 0x0; i <= 0xF; i++)
         {
-            registers.setVAtAddress(p, p);
+            registers.setVAtAddress(i, i);
         }
-
-        registers.setI((short) 0x200);
 
         memory.setMemoryAtAddress((short) 0x200, (byte)0xFF);
         memory.setMemoryAtAddress((short) 0x201, (byte)0x55);
         cpu.fetchOpcode();
         cpu.decodeAndRunOpcode();
 
-        for(byte p = 0x0; p <= 0xF; p++)
+        for(byte i = 0x0; i <= 0xF; i++)
         {
-            assertEquals(p, memory.getMemoryAtAddress((short) (registers.getI() + p)));
+            assertEquals(i, memory.getMemoryAtAddress((short) (registers.getI() + i)));
+        }
+    }
+
+    ///FX65
+    ///Read registers V0 through Vx from memory starting at location I
+    @Test
+    void loadMemoryToRegisters() throws UnknownOpcodeException
+    {
+        registers.resetAllRegisters();
+
+        for(byte i = 0x0; i <= 0xF; i++)
+        {
+            memory.setMemoryAtAddress((short) (registers.getI() + i), i);
+        }
+
+
+        memory.setMemoryAtAddress((short) 0x200, (byte)0xFF);
+        memory.setMemoryAtAddress((short) 0x201, (byte)0x65);
+        cpu.fetchOpcode();
+        cpu.decodeAndRunOpcode();
+
+        for(byte i = 0x0; i <= 0xF; i++)
+        {
+            byte b = registers.getVAtAddress(i);
+            assertEquals(i, registers.getVAtAddress(i));
         }
     }
 }

@@ -107,6 +107,7 @@ public class CPU {
                 else if(getCurrentOpcodeLastTwoDigit() == 0x1E) { addRegisterToI(); }
                 else if(getCurrentOpcodeLastTwoDigit() == 0x33) { loadVXasBCDtoMemory(); }
                 else if(getCurrentOpcodeLastTwoDigit() == 0x55) { loadMultipleRegistersToMemory(); }
+                else if(getCurrentOpcodeLastTwoDigit() == 0x65) { loadMemoryToRegisters(); }
                 break;
 
             default:
@@ -412,7 +413,19 @@ public class CPU {
     {
         for(byte reg = 0; reg <= getX(); reg++)
         {
-            memory.setMemoryAtAddress((short)(registers.getI() + reg), registers.getVAtAddress(reg));
+            short address = (short)(registers.getI() + reg);
+            byte value = registers.getVAtAddress(reg);
+            memory.setMemoryAtAddress(address, value);
+        }
+    }
+
+    ///FX65
+    ///Read registers V0 through Vx from memory starting at location I
+    private void loadMemoryToRegisters()
+    {
+        for(byte reg = 0; reg <= getX(); reg++){
+            byte value = memory.getMemoryAtAddress((short) (registers.getI() + reg));
+            registers.setVAtAddress(reg, value);
         }
     }
     //endregion

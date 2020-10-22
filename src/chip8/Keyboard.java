@@ -3,8 +3,6 @@ package chip8;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
-import java.security.Key;
-import java.util.Arrays;
 
 public class Keyboard {
     private boolean[] pressedKeys;
@@ -19,7 +17,14 @@ public class Keyboard {
 
     public byte getLastPressed() { return lastPressed; }
     public boolean isKeyPressed(byte keyValue) { return pressedKeys[keyValue]; }
-    public void toggleKeyPressed(byte keyValue) { pressedKeys[keyValue] ^= true; }
+
+    //For the unit tests to work
+    public void toggleKeyPressed(byte keyValue)
+    {
+        pressedKeys[keyValue] ^= true;
+        pressedCount++;
+        lastPressed = keyValue;
+    }
 
     //https://stackoverflow.com/questions/18037576/how-do-i-check-if-the-user-is-pressing-a-key
     private void setUpListeners()
@@ -120,5 +125,22 @@ public class Keyboard {
                 return false;
         }
         return true;
+    }
+
+    public byte keyboardInterrupt()
+    {
+        while(pressedCount == 0)
+        {
+            try
+            {
+                Thread.sleep(0);
+            }
+            catch (InterruptedException e)
+            {
+                e.printStackTrace();
+            }
+        }
+
+        return lastPressed;
     }
 }

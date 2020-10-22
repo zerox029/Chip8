@@ -719,6 +719,23 @@ class CPUTests {
         assertEquals(0x3A, registers.getVAtAddress(0));
     }
 
+    ///FX0A
+    ///Wait for a key press, store the value of the key in Vx.
+    @Test
+    void getKeyPress() throws UnknownOpcodeException
+    {
+        registers.resetAllRegisters();
+
+        keyboard.toggleKeyPressed((byte) 0x1);
+
+        memory.setMemoryAtAddress((short) 0x200, (byte)0xF1);
+        memory.setMemoryAtAddress((short) 0x201, (byte)0x0A);
+        cpu.fetchOpcode();
+        cpu.decodeAndRunOpcode();
+
+        assertEquals(0x1, registers.getVAtAddress(1));
+    }
+
     ///FX15
     ///DT is set equal to the value of Vx.
     @Test

@@ -113,6 +113,7 @@ public class CPU {
                 break;
             case (short)0xF000:
                 if(getCurrentOpcodeLastTwoDigit() == 0x07) { loadDTOnRegister(); }
+                else if(getCurrentOpcodeLastTwoDigit() == 0x0A) { getKeyPress(); }
                 else if(getCurrentOpcodeLastTwoDigit() == 0x15) { loadRegisterOnDT(); }
                 else if(getCurrentOpcodeLastTwoDigit() == 0x18) { loadRegisterOnST(); }
                 else if(getCurrentOpcodeLastTwoDigit() == 0x1E) { addRegisterToI(); }
@@ -426,6 +427,13 @@ public class CPU {
     private void loadDTOnRegister()
     {
         registers.setVAtAddress(getX(), registers.getDT());
+    }
+
+    ///FX0A
+    ///Wait for a key press, store the value of the key in Vx.
+    private void getKeyPress()
+    {
+        registers.setVAtAddress(getX(), keyboard.keyboardInterrupt());
     }
 
     ///FX15

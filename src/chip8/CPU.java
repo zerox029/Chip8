@@ -55,7 +55,8 @@ public class CPU {
         switch(getCurrentOpcodeFirstDigit())
         {
             case 0x0000:
-                ret();
+                if(getCurrentOpcodeLastDigit() == 0x0) { cls(); }
+                else if(getCurrentOpcodeLastDigit() == 0xE) { ret(); }
                 break;
             case 0x1000:
                 jump();
@@ -121,12 +122,26 @@ public class CPU {
     }
 
     //region OPCODES
+    ///00E0
+    ///Clear the display
+    private void cls()
+    {
+        for(byte x = 0; x < Utils.SCREEN_WIDTH; x++)
+        {
+            for(byte y = 0; y < Utils.SCREEN_HEIGHT; y++)
+            {
+                memory.setPixelAtPosition(x, y, false);
+            }
+        }
+    }
+
     ///00EE
     ///Returns from a subroutine
     private void ret()
     {
         short stackTopAddress = memory.getStackAtValue(registers.getSP());
         registers.setPC(stackTopAddress);
+        System.out.println(registers.getPC());
         registers.setSP((byte)(registers.getSP() - 0x01));
     }
 

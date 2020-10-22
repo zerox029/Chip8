@@ -44,6 +44,30 @@ class CPUTests {
 
 
     /** Specific opcodes **/
+    ///00E0
+    ///Clear the display
+    @Test
+    void cls() throws UnknownOpcodeException
+    {
+        registers.resetAllRegisters();
+
+        memory.setPixelAtPosition((byte)2, (byte)5, true);
+        memory.setPixelAtPosition((byte)23, (byte)14, true);
+
+        memory.setMemoryAtAddress((short) 0x200, (byte)0x00);
+        memory.setMemoryAtAddress((short) 0x201, (byte)0xE0);
+        cpu.fetchOpcode();
+        cpu.decodeAndRunOpcode();
+
+        for(byte x = 0; x < Utils.SCREEN_WIDTH; x++)
+        {
+            for(byte y = 0; y < Utils.SCREEN_HEIGHT; y++)
+            {
+                assertFalse(memory.getPixelAtPosition(x, y));
+            }
+        }
+    }
+
     ///00EE
     ///Returns from a subroutine
     @Test
@@ -59,7 +83,7 @@ class CPUTests {
         cpu.fetchOpcode();
         cpu.decodeAndRunOpcode();
 
-        assertEquals(0x05C3, registers.getPC());
+        assertEquals(0x5C3, registers.getPC());
         assertEquals(0x0, registers.getSP());
     }
 

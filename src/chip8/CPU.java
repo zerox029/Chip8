@@ -42,6 +42,7 @@ public class CPU {
     private short getCurrentOpcodeLastDigit() { return (short)(currentOpcode & 0x000F); }
     private short getCurrentOpcodeLastTwoDigit() { return (short)(currentOpcode & 0x00FF); }
     private short getNNN() { return (short)(currentOpcode & 0x0FFF); }
+    private short getN() { return (short)(currentOpcode & 0x000F); }
     private byte getKK() { return (byte)(currentOpcode & 0x00FF); }
     private byte getX() { return (byte)((currentOpcode & 0x0F00) >> 8); }
     private byte getY() { return (byte)((currentOpcode & 0x00F0) >> 4); }
@@ -100,11 +101,15 @@ public class CPU {
             case (short)0xC000:
                 rand();
                 break;
+            case (short)0xD000:
+                draw();
+                break;
             case (short)0xF000:
                 if(getCurrentOpcodeLastTwoDigit() == 0x07) { loadDTOnRegister(); }
                 else if(getCurrentOpcodeLastTwoDigit() == 0x15) { loadRegisterOnDT(); }
                 else if(getCurrentOpcodeLastTwoDigit() == 0x18) { loadRegisterOnST(); }
                 else if(getCurrentOpcodeLastTwoDigit() == 0x1E) { addRegisterToI(); }
+                else if(getCurrentOpcodeLastTwoDigit() == 0x29) { loadHexSpriteToI(); }
                 else if(getCurrentOpcodeLastTwoDigit() == 0x33) { loadVXasBCDtoMemory(); }
                 else if(getCurrentOpcodeLastTwoDigit() == 0x55) { loadMultipleRegistersToMemory(); }
                 else if(getCurrentOpcodeLastTwoDigit() == 0x65) { loadMemoryToRegisters(); }
@@ -351,6 +356,36 @@ public class CPU {
         registers.setVAtAddress(getX(), (byte)(rnd & getKK()));
     }
 
+    ///DXYN
+    ///Display n-byte sprite starting at memory location I at (Vx, Vy), set VF = collision.
+    private void draw()
+    {
+        byte vf = 0x0;
+
+        for(byte i = 0; i < getN(); i++)
+        {
+            byte current = memory.getMemoryAtAddress((short)(registers.getI() + i));
+
+            for(byte j = 0; j < 7; j++)
+            {
+                int uSign_x = byteToUnsignedInt(registers.getVAtAddress(getX()));
+                int uSign_y = byteToUnsignedInt(registers.getVAtAddress(getY()));
+
+                int uSign_xFinalPos = (uSign_x + j) % 64;
+                int uSign_yFinalPos = (uSign_y + i) % 32;
+
+                boolean previousPixel = memory.getPixelAtPosition((byte)uSign_xFinalPos, (byte)uSign_yFinalPos);
+                boolean newPixel = previousPixel ^ (current & (1 << 7 - j)) != 0;
+
+                memory.setPixelAtPosition((byte)uSign_xFinalPos, (byte)uSign_yFinalPos, newPixel);
+
+                if(previousPixel && !newPixel) { vf = 0x01; }
+            }
+        }
+
+        registers.setVAtAddress(0xF, vf);
+    }
+
     ///FX07
     ///The value of DT is placed into Vx.
     private void loadDTOnRegister()
@@ -374,6 +409,14 @@ public class CPU {
         byte vx = registers.getVAtAddress(getX());
 
         registers.setST(vx);
+    }
+
+    ///FX29
+    ///Set I = location of sprite for digit Vx.
+    private void loadHexSpriteToI()
+    {
+        short address = (short)(Utils.SPRITES_STORAGE_STARTING_ADDRESS + (registers.getVAtAddress(getX()) * 5));
+        registers.setI(address);
     }
 
     ///FX1E

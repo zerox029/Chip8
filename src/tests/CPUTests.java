@@ -3,6 +3,7 @@ package tests;
 import chip8.CPU;
 import chip8.Memory;
 import chip8.Registers;
+import chip8.Utils;
 import exceptions.UnknownOpcodeException;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -547,6 +548,103 @@ class CPUTests {
         assertEquals(0x4C, registers.getVAtAddress(0x0));
     }
 
+    ///DXYN
+    ///Display n-byte sprite starting at memory location I at (Vx, Vy), set VF = collision.
+    @Test
+    void drawNoCollision() throws UnknownOpcodeException
+    {
+        registers.resetAllRegisters();
+
+        registers.setVAtAddress(0x0, (byte) 0xA);
+        registers.setVAtAddress(0x1, (byte) 0xA);
+        registers.setVAtAddress(0x2, (byte) 0xA);
+
+        //Load A
+        memory.setMemoryAtAddress((short) 0x200, (byte)0xF0);
+        memory.setMemoryAtAddress((short) 0x201, (byte)0x29);
+        cpu.fetchOpcode();
+        cpu.decodeAndRunOpcode();
+
+        //Display A
+        memory.setMemoryAtAddress((short) 0x200, (byte)0xD1);
+        memory.setMemoryAtAddress((short) 0x201, (byte)0x25);
+        cpu.fetchOpcode();
+        cpu.decodeAndRunOpcode();
+
+        assertTrue(isSameByte((byte)0xF0,10,10));
+        assertTrue(isSameByte((byte)0x90,10,11));
+        assertTrue(isSameByte((byte)0xF0,10,12));
+        assertTrue(isSameByte((byte)0x90,10,13));
+        assertTrue(isSameByte((byte)0x90,10,14));
+
+        assertEquals(0x0, registers.getVAtAddress(0xF));
+    }
+
+    ///DXYN
+    ///Display n-byte sprite starting at memory location I at (Vx, Vy), set VF = collision.
+    @Test
+    void drawCollision() throws UnknownOpcodeException
+    {
+        registers.resetAllRegisters();
+
+        /**DISPLAYING THE FIRST A**/
+        registers.setVAtAddress(0x0, (byte) 0xA);
+        registers.setVAtAddress(0x1, (byte) 0xA);
+        registers.setVAtAddress(0x2, (byte) 0xA);
+        //Load A
+        memory.setMemoryAtAddress((short) 0x200, (byte)0xF0);
+        memory.setMemoryAtAddress((short) 0x201, (byte)0x29);
+        cpu.fetchOpcode();
+        cpu.decodeAndRunOpcode();
+        //Display A
+        memory.setMemoryAtAddress((short) 0x200, (byte)0xD1);
+        memory.setMemoryAtAddress((short) 0x201, (byte)0x25);
+        cpu.fetchOpcode();
+        cpu.decodeAndRunOpcode();
+
+        /**DISPLAYING THE SECOND A**/
+        cpu.fetchOpcode();
+        cpu.decodeAndRunOpcode();
+
+        assertTrue(isSameByte((byte)0x00,10,10));
+        assertTrue(isSameByte((byte)0x00,10,11));
+        assertTrue(isSameByte((byte)0x00,10,12));
+        assertTrue(isSameByte((byte)0x00,10,13));
+        assertTrue(isSameByte((byte)0x00,10,14));
+
+        assertEquals(0x1, registers.getVAtAddress(0xF));
+    }
+
+    ///DXYN
+    ///Display n-byte sprite starting at memory location I at (Vx, Vy), set VF = collision.
+    @Test
+    void drawOverflow() throws UnknownOpcodeException
+    {
+        registers.resetAllRegisters();
+
+        registers.setVAtAddress(0x0, (byte) 0xA);
+        registers.setVAtAddress(0x1, (byte) 62);
+        registers.setVAtAddress(0x2, (byte) 0x0);
+
+        //Load A
+        memory.setMemoryAtAddress((short) 0x200, (byte)0xF0);
+        memory.setMemoryAtAddress((short) 0x201, (byte)0x29);
+        cpu.fetchOpcode();
+        cpu.decodeAndRunOpcode();
+
+        //Display A
+        memory.setMemoryAtAddress((short) 0x200, (byte)0xD1);
+        memory.setMemoryAtAddress((short) 0x201, (byte)0x25);
+        cpu.fetchOpcode();
+        cpu.decodeAndRunOpcode();
+
+        assertTrue(isSameByte((byte)0xF0,62,0));
+        assertTrue(isSameByte((byte)0x90,62,1));
+        assertTrue(isSameByte((byte)0xF0,62,2));
+        assertTrue(isSameByte((byte)0x90,62,3));
+        assertTrue(isSameByte((byte)0x90,62,4));
+    }
+
     ///FX07
     ///The value of DT is placed into Vx.
     @Test
@@ -616,6 +714,23 @@ class CPUTests {
         assertEquals(0x08, registers.getI());
     }
 
+    ///FX29
+    ///The values of I and Vx are added, and the results are stored in I.
+    @Test
+    void loadHexSpriteToI() throws UnknownOpcodeException
+    {
+        registers.resetAllRegisters();
+
+        registers.setVAtAddress(0x0, (byte) 0xB);
+
+        memory.setMemoryAtAddress((short) 0x200, (byte)0xF0);
+        memory.setMemoryAtAddress((short) 0x201, (byte)0x29);
+        cpu.fetchOpcode();
+        cpu.decodeAndRunOpcode();
+
+        assertEquals((short)(Utils.SPRITES_STORAGE_STARTING_ADDRESS +0x00B*5),registers.getI());
+    }
+
     ///FX33
     ///Store BCD representation of Vx in memory locations I, I+1, and I+2
     ///Taken from ismael rodriguez's implementation
@@ -681,5 +796,21 @@ class CPUTests {
         {
             assertEquals(i, registers.getVAtAddress(i));
         }
+    }
+
+    //Taken from ismael rodriguez's implementation
+    private boolean isSameByte(byte b, int x, int y)
+    {
+        boolean same = true;
+        for(int i = 0; i <=7; i++)
+        {
+            same = same && (isBitSet(b,7-i) == memory.getPixelAtPosition((byte)((x+i)%64), (byte)y));
+        }
+        return same;
+    }
+
+    private  Boolean isBitSet(byte b, int bit)
+    {
+        return (b & (1 << bit)) != 0;
     }
 }

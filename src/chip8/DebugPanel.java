@@ -8,10 +8,10 @@ public class DebugPanel extends JPanel {
     private int width = Utils.DEBUG_PANEL_WIDTH;
     private int height = Utils.DEBUG_PANEL_HEIGHT;
 
-    Memory memory;
-    Registers registers;
-    Keyboard keyboard;
-    CPU cpu;
+    private Memory memory;
+    private Registers registers;
+    private Keyboard keyboard;
+    private CPU cpu;
 
     public DebugPanel(Memory memory, Registers registers, Keyboard keyboard, CPU cpu)
     {
@@ -32,12 +32,41 @@ public class DebugPanel extends JPanel {
         repaint();
     }
 
+    ///TODO: Replace those with JLabels
     public void paintCurrentOpcode()
     {
         String opcode = String.format("0x%04X", cpu.getCurrentOpcode());
         graphics.setColor(Color.WHITE);
-        graphics.setFont(new Font("Arial", 0, 16));
-        graphics.drawString("Current opcode: " + opcode, 10, 20);
+        graphics.setFont(new Font("Arial", 0, 14));
+        graphics.drawString("Current opcode: " + opcode, 20, 20);
+    }
+
+    public void paintRegisters()
+    {
+        String[] nonVRegs = new String[]{ "PC: " + String.format("0x%04X", registers.getPC()),
+                "I:  " + String.format("0x%04X", registers.getI()),
+                "DT:  " + String.format("0x%04X", registers.getDT()),
+                "ST:  " + String.format("0x%04X", registers.getST()) };
+
+        graphics.setColor(Color.WHITE);
+        graphics.setFont(new Font("Arial", 0, 14));
+
+        graphics.drawString(nonVRegs[0], 20, 60);
+        graphics.drawString(nonVRegs[1], 120, 60);
+        graphics.drawString(nonVRegs[0], 20, 80);
+        graphics.drawString(nonVRegs[1], 120, 80);
+
+        int currentReg = 0;
+        for(int x = 0; x < 4; x++)
+        {
+            for(int y = 0; y < 4; y++)
+            {
+                String text = "V" + currentReg + ":  " + String.format("0x%04X", registers.getVAtAddress(currentReg));
+                graphics.drawString(text, x * 100 + 230, y * 20 + 20);
+
+                currentReg++;
+            }
+        }
     }
 
     @Override
@@ -48,5 +77,6 @@ public class DebugPanel extends JPanel {
         this.setBackground(Utils.WINDOW_COLOR);
 
         paintCurrentOpcode();
+        paintRegisters();
     }
 }

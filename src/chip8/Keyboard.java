@@ -20,6 +20,7 @@ public class Keyboard {
 
     public byte getLastPressed() { return lastPressed; }
     public boolean isKeyPressed(byte keyValue) { return pressedKeys[keyValue]; }
+    public int getPressedCount() { return pressedCount; }
 
     public boolean isStepModeActive() { return stepModeActive; }
 

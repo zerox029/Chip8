@@ -10,7 +10,7 @@ public class Utils {
     public static final int SCREEN_SCALE = 10;
 
     public static final int DEBUG_PANEL_WIDTH = 640;
-    public static final int DEBUG_PANEL_HEIGHT = 100;
+    public static final int DEBUG_PANEL_HEIGHT = 150;
 
     public static final Color ON_COLOR = Color.white;
     public static final Color OFF_COLOR = Color.black;

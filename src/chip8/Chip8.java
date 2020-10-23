@@ -1,6 +1,7 @@
 package chip8;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -49,15 +50,8 @@ public class Chip8 {
         display = new Display(memory);
         debugPanel = new DebugPanel(memory, registers, keyboard, cpu);
 
-        JFrame frame = new JFrame("Chip8");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.add(display, BorderLayout.NORTH);
-        frame.add(debugPanel, BorderLayout.SOUTH);
-        frame.pack();
-        frame.setResizable(false);
-        frame.setBackground(Utils.WINDOW_COLOR);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        Window window = new Window("Chip8", display, debugPanel);
+        window.setVisible(true);
     }
 
     public void loadRom(String title) throws IOException

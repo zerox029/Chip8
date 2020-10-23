@@ -19,7 +19,7 @@ public class Utils {
     public static final short FIRST_PROGRAM_SPACE_ADDRESS = 0x200;
     public static final short MAX_MEMORY_ADDRESS = 0xFFF;
 
-    public static final String ROMS_PATH = "roms/";
+    public static final String ROMS_PATH = "roms/games/";
 
     public static final short SPRITES_STORAGE_STARTING_ADDRESS = 0x000;
 

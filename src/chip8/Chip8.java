@@ -24,7 +24,7 @@ public class Chip8 {
         try
         {
             init();
-            loadRom("jason.ch8");
+            loadRom("Connect 4 [David Winter].ch8");
             emulationLoop();
         }
         catch (Exception err)

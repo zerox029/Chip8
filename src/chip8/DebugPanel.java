@@ -53,15 +53,15 @@ public class DebugPanel extends JPanel {
 
         graphics.drawString(nonVRegs[0], 20, 60);
         graphics.drawString(nonVRegs[1], 120, 60);
-        graphics.drawString(nonVRegs[0], 20, 80);
-        graphics.drawString(nonVRegs[1], 120, 80);
+        graphics.drawString(nonVRegs[2], 20, 80);
+        graphics.drawString(nonVRegs[3], 120, 80);
 
         int currentReg = 0;
         for(int x = 0; x < 4; x++)
         {
             for(int y = 0; y < 4; y++)
             {
-                String text = "V" + currentReg + ":  " + String.format("0x%04X", registers.getVAtAddress(currentReg));
+                String text = "V" + String.format("%01X", currentReg) + ":  " + String.format("0x%04X", registers.getVAtAddress(currentReg));
                 graphics.drawString(text, x * 100 + 230, y * 20 + 20);
 
                 currentReg++;

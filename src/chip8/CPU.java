@@ -52,6 +52,11 @@ public class CPU {
 
     public void toggleRandom() { randomEnabled ^= true; }
 
+    private boolean isBitSet(byte b, int bit)
+    {
+        return (b & (1 << bit)) != 0;
+    }
+
     public void decodeAndRunOpcode() throws UnknownOpcodeException
     {
         switch(getCurrentOpcodeFirstDigit())
@@ -388,7 +393,7 @@ public class CPU {
         {
             byte current = memory.getMemoryAtAddress((short)(registers.getI() + i));
 
-            for(byte j = 0; j < 7; j++)
+            for(byte j = 0; j <= 7; j++)
             {
                 int uSign_x = byteToUnsignedInt(registers.getVAtAddress(getX()));
                 int uSign_y = byteToUnsignedInt(registers.getVAtAddress(getY()));
@@ -397,7 +402,7 @@ public class CPU {
                 int uSign_yFinalPos = (uSign_y + i) % 32;
 
                 boolean previousPixel = memory.getPixelAtPosition((byte)uSign_xFinalPos, (byte)uSign_yFinalPos);
-                boolean newPixel = previousPixel ^ (current & (1 << 7 - j)) != 0;
+                boolean newPixel = previousPixel ^ isBitSet(current, 7-j);
 
                 memory.setPixelAtPosition((byte)uSign_xFinalPos, (byte)uSign_yFinalPos, newPixel);
 

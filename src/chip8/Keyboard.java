@@ -9,7 +9,7 @@ public class Keyboard {
     private int pressedCount;
     private byte lastPressed;
 
-    private boolean stepModeActive = true;
+    private boolean stepModeActive = false;
     public boolean nextInstructionPressed = false;
 
     public Keyboard()

@@ -24,7 +24,7 @@ public class Chip8 {
         try
         {
             init();
-            loadRom("Keypad Test [Hap, 2006].ch8");
+            loadRom("jason.ch8");
             emulationLoop();
         }
         catch (Exception err)
@@ -88,8 +88,6 @@ public class Chip8 {
         {
             if(!keyboard.isStepModeActive())
             {
-                System.out.println(keyboard.isStepModeActive());
-
                 startTime = System.nanoTime();
 
                 emulateCycle();

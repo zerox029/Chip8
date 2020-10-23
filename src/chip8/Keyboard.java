@@ -9,6 +9,9 @@ public class Keyboard {
     private int pressedCount;
     private byte lastPressed;
 
+    private boolean stepModeActive = true;
+    public boolean nextInstructionPressed = false;
+
     public Keyboard()
     {
         pressedKeys = new boolean[16];
@@ -17,6 +20,8 @@ public class Keyboard {
 
     public byte getLastPressed() { return lastPressed; }
     public boolean isKeyPressed(byte keyValue) { return pressedKeys[keyValue]; }
+
+    public boolean isStepModeActive() { return stepModeActive; }
 
     //For the unit tests to work
     public void toggleKeyPressed(byte keyValue)
@@ -38,7 +43,15 @@ public class Keyboard {
                     switch (e.getID())
                     {
                         case KeyEvent.KEY_PRESSED:
-                            if(setKeyValue(e.getKeyCode(), true)) { pressedCount++; }
+                            if(stepModeActive)
+                            {
+                                if(e.getKeyCode() == KeyEvent.VK_RIGHT) { nextInstructionPressed = true; };
+                            }
+                            else
+                            {
+                                if(e.getKeyCode() == KeyEvent.VK_F1) { stepModeActive ^= true; }
+                                else if(setKeyValue(e.getKeyCode(), true)) { pressedCount++; }
+                            }
                             break;
                         case KeyEvent.KEY_RELEASED:
                             if(setKeyValue(e.getKeyCode(), false)) { pressedCount--; }

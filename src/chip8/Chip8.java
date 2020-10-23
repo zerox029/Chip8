@@ -86,27 +86,47 @@ public class Chip8 {
 
         while(running)
         {
-            //TimeUnit.MILLISECONDS.sleep(100);
-
-            startTime = System.nanoTime();
-
-            emulateCycle();
-
-            if(refreshCycles % Utils.CYCLES_FOR_REFRESHING == 0)
+            if(!keyboard.isStepModeActive())
             {
-                refreshCycles = 0;
+                System.out.println(keyboard.isStepModeActive());
 
-                display.paintScreen();
-                debugPanel.paintScreen();
-                registers.setDT((byte) (registers.getDT() - 0x01));
+                startTime = System.nanoTime();
 
-                //Sound stuff
+                emulateCycle();
+
+                if(refreshCycles % Utils.CYCLES_FOR_REFRESHING == 0)
+                {
+                    refreshCycles = 0;
+
+                    display.paintScreen();
+                    debugPanel.paintScreen();
+                    registers.setDT((byte) (registers.getDT() - 0x01));
+
+                    //Sound stuff
+                }
+
+                endTime = System.nanoTime();
+                refreshCycles++;
+
+                waitForEndOfCycle(startTime, endTime);
             }
+            else
+            {
+                if(!keyboard.nextInstructionPressed)
+                {
+                    Thread.sleep(0);
+                }
+                else
+                {
+                    emulateCycle();
 
-            endTime = System.nanoTime();
-            refreshCycles++;
+                    display.paintScreen();
+                    debugPanel.paintScreen();
+                    registers.setDT((byte) (registers.getDT() - 0x01));
 
-            waitForEndOfCycle(startTime, endTime);
+                    keyboard.nextInstructionPressed = false;
+                }
+            }
         }
     }
 

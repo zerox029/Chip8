@@ -85,13 +85,12 @@ public class Chip8 {
             {
                 startTime = System.nanoTime();
 
-                emulateCycle();
+                emulateCycle(debugPanel);
 
                 if(refreshCycles % Utils.CYCLES_FOR_REFRESHING == 0)
                 {
                     refreshCycles = 0;
 
-                    debugPanel.paintScreen();
                     display.paintScreen();
                     registers.setDT((byte) (registers.getDT() - 0x01));
 
@@ -111,10 +110,9 @@ public class Chip8 {
                 }
                 else
                 {
-                    emulateCycle();
+                    emulateCycle(debugPanel);
 
                     display.paintScreen();
-                    debugPanel.paintScreen();
                     registers.setDT((byte) (registers.getDT() - 0x01));
 
                     keyboard.nextInstructionPressed = false;
@@ -140,13 +138,15 @@ public class Chip8 {
         }
     }
 
-    private void emulateCycle()
+    private void emulateCycle(DebugPanel debugPanel)
     {
         try
         {
             cpu.fetchOpcode();
+            debugPanel.paintScreen();
             cpu.incrementPC();
             cpu.decodeAndRunOpcode();
+            debugPanel.paintScreen();
 
         }
         catch(Exception e)

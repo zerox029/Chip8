@@ -418,14 +418,16 @@ public class CPU {
     ///Skip next instruction if key with the value of Vx is pressed.
     private void skipIfPressed()
     {
-        if(keyboard.getCurrentKeyPressed() == getX()) { registers.setPC((short) (registers.getPC() + 2)); }
+        int vx = registers.getVAtAddress(getX());
+        if(keyboard.getCurrentKeyPressed() == vx) { registers.setPC((short) (registers.getPC() + 2)); }
     }
 
     ///EXA1
     ///Skip next instruction if key with the value of Vx is not pressed
     private void skipIfNotPressed()
     {
-        if(keyboard.getCurrentKeyPressed() != getX()) { registers.setPC((short) (registers.getPC() + 2)); }
+        int vx = registers.getVAtAddress(getX());
+        if(keyboard.getCurrentKeyPressed() != vx) { registers.setPC((short) (registers.getPC() + 2)); }
     }
 
     ///FX07

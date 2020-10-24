@@ -47,7 +47,6 @@ public class Keyboard extends KeyAdapter
         {
             if(Utils.keyCodes[i] == keycode)
             {
-                System.out.println(String.format("0x%01X", i));
                 return i;
             }
         }

@@ -25,7 +25,7 @@ public class Chip8 {
         try
         {
             init();
-            loadRom("programs/Keypad Test [Hap, 2006].ch8");
+            loadRom("games/Pong (1 player).ch8");
             emulationLoop();
         }
         catch (Exception err)

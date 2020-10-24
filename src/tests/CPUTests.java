@@ -678,8 +678,9 @@ class CPUTests {
         registers.resetAllRegisters();
 
         keyboard.setCurrentKeyPressed((byte) 0xA);
+        registers.setVAtAddress(0x0, (byte) 0xA);
 
-        memory.setMemoryAtAddress((short) 0x200, (byte)0xEA);
+        memory.setMemoryAtAddress((short) 0x200, (byte)0xE0);
         memory.setMemoryAtAddress((short) 0x201, (byte)0x9E);
         cpu.fetchOpcode();
         cpu.decodeAndRunOpcode();
@@ -694,7 +695,9 @@ class CPUTests {
     {
         registers.resetAllRegisters();
 
-        memory.setMemoryAtAddress((short) 0x200, (byte)0xEA);
+        registers.setVAtAddress(0x0, (byte) 0xA);
+
+        memory.setMemoryAtAddress((short) 0x200, (byte)0xE0);
         memory.setMemoryAtAddress((short) 0x201, (byte)0xA1);
         cpu.fetchOpcode();
         cpu.decodeAndRunOpcode();

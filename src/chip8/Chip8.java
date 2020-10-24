@@ -25,7 +25,7 @@ public class Chip8 {
         try
         {
             init();
-            loadRom("games/Pong (1 player).ch8");
+            loadRom("games/Space Invaders [David Winter].ch8");
             emulationLoop();
         }
         catch (Exception err)

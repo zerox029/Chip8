@@ -14,8 +14,8 @@ public class Utils {
     public static final int DEBUG_PANEL_WIDTH = 640;
     public static final int DEBUG_PANEL_HEIGHT = 150;
 
-    public static final Color ON_COLOR = Color.white;
-    public static final Color OFF_COLOR = Color.black;
+    public static final Color ON_COLOR = new Color(160, 179, 141);
+    public static final Color OFF_COLOR = new Color(41, 51, 30);
     public static final Color WINDOW_COLOR = new Color(48, 48, 48);
 
     public static final short FIRST_PROGRAM_SPACE_ADDRESS = 0x200;

@@ -1,6 +1,8 @@
 package chip8;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.security.Key;
 
 public class Utils {
     public static final int MEMORY_SIZE = 4096;
@@ -19,7 +21,7 @@ public class Utils {
     public static final short FIRST_PROGRAM_SPACE_ADDRESS = 0x200;
     public static final short MAX_MEMORY_ADDRESS = 0xFFF;
 
-    public static final String ROMS_PATH = "roms/games/";
+    public static final String ROMS_PATH = "roms/";
 
     public static final short SPRITES_STORAGE_STARTING_ADDRESS = 0x000;
 
@@ -46,6 +48,28 @@ public class Utils {
     public static final byte[] sprite_d = new byte[]{(byte)0xE0,(byte)0x90,(byte)0x90,(byte)0x90,(byte)0xE0};
     public static final byte[] sprite_e = new byte[]{(byte)0xF0,(byte)0x80,(byte)0xF0,(byte)0x80,(byte)0xF0};
     public static final byte[] sprite_f = new byte[]{(byte)0xF0,(byte)0x80,(byte)0xF0,(byte)0x80,(byte)0x80};
+
+    public static final int[] keyCodes = {
+            KeyEvent.VK_X, //F
+            KeyEvent.VK_1, //1
+            KeyEvent.VK_2, //2
+            KeyEvent.VK_3, //3
+            KeyEvent.VK_Q, //4
+            KeyEvent.VK_W, //5
+            KeyEvent.VK_E, //6
+            KeyEvent.VK_A, //7
+            KeyEvent.VK_S, //8
+            KeyEvent.VK_D, //9
+            KeyEvent.VK_Z, //A
+            KeyEvent.VK_C, //B
+            KeyEvent.VK_4, //C
+            KeyEvent.VK_R, //D
+            KeyEvent.VK_F, //E
+            KeyEvent.VK_V, //F
+    };
+
+    public static final int DEBUG_TOGGLE_STEP_MODE = KeyEvent.VK_F1;
+    public static final int DEBUG_NEXT_INSTRUCTION_KEY = KeyEvent.VK_RIGHT;
 
     private Utils(){}; //Private constructor to hide the public one
 }

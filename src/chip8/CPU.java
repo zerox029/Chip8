@@ -3,6 +3,8 @@ package chip8;
 import java.util.Random;
 import exceptions.UnknownOpcodeException;
 
+import javax.swing.*;
+
 public class CPU {
 
     private Memory memory;
@@ -153,7 +155,6 @@ public class CPU {
     {
         short stackTopAddress = memory.getStackAtValue(registers.getSP());
         registers.setPC(stackTopAddress);
-        System.out.println(registers.getPC());
         registers.setSP((byte)(registers.getSP() - 0x01));
     }
 
@@ -417,14 +418,14 @@ public class CPU {
     ///Skip next instruction if key with the value of Vx is pressed.
     private void skipIfPressed()
     {
-        if(keyboard.isKeyPressed(getX())) { registers.setPC((short) (registers.getPC() + 2)); }
+        if(keyboard.getCurrentKeyPressed() == getX()) { registers.setPC((short) (registers.getPC() + 2)); }
     }
 
     ///EXA1
     ///Skip next instruction if key with the value of Vx is not pressed
     private void skipIfNotPressed()
     {
-        if(!keyboard.isKeyPressed(getX())) { registers.setPC((short) (registers.getPC() + 2)); }
+        if(keyboard.getCurrentKeyPressed() != getX()) { registers.setPC((short) (registers.getPC() + 2)); }
     }
 
     ///FX07
@@ -438,7 +439,7 @@ public class CPU {
     ///Wait for a key press, store the value of the key in Vx.
     private void getKeyPress()
     {
-        registers.setVAtAddress(getX(), keyboard.keyboardInterrupt());
+        registers.setVAtAddress(getX(), (byte)keyboard.keyboardInterrupt());
     }
 
     ///FX15

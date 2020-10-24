@@ -25,7 +25,7 @@ public class Chip8 {
         try
         {
             init();
-            loadRom("Connect 4 [David Winter].ch8");
+            loadRom("programs/Keypad Test [Hap, 2006].ch8");
             emulationLoop();
         }
         catch (Exception err)
@@ -51,6 +51,7 @@ public class Chip8 {
         debugPanel = new DebugPanel(memory, registers, keyboard, cpu);
 
         Window window = new Window("Chip8", display, debugPanel);
+        window.addKeyListener(keyboard);
         window.setVisible(true);
     }
 
@@ -90,8 +91,8 @@ public class Chip8 {
                 {
                     refreshCycles = 0;
 
-                    display.paintScreen();
                     debugPanel.paintScreen();
+                    display.paintScreen();
                     registers.setDT((byte) (registers.getDT() - 0x01));
 
                     //Sound stuff
@@ -104,7 +105,7 @@ public class Chip8 {
             }
             else
             {
-                if(!keyboard.nextInstructionPressed)
+                if(keyboard.nextInstructionPressed == false)
                 {
                     Thread.sleep(0);
                 }

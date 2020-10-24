@@ -677,7 +677,7 @@ class CPUTests {
     {
         registers.resetAllRegisters();
 
-        keyboard.toggleKeyPressed((byte) 0xA);
+        keyboard.setCurrentKeyPressed((byte) 0xA);
 
         memory.setMemoryAtAddress((short) 0x200, (byte)0xEA);
         memory.setMemoryAtAddress((short) 0x201, (byte)0x9E);
@@ -726,7 +726,7 @@ class CPUTests {
     {
         registers.resetAllRegisters();
 
-        keyboard.toggleKeyPressed((byte) 0x1);
+        keyboard.setCurrentKeyPressed((byte) 0x1);
 
         memory.setMemoryAtAddress((short) 0x200, (byte)0xF1);
         memory.setMemoryAtAddress((short) 0x201, (byte)0x0A);

@@ -71,8 +71,8 @@ public class DebugPanel extends JPanel {
 
     public void paintKeyboardInput()
     {
-        graphics.drawString("Pressed keys: " + keyboard.getPressedCount(), 20, 120);
-        graphics.drawString("Last key pressed: " + keyboard.getLastPressed(), 150, 120);
+        graphics.drawString("Pressed key: " + keyboard.getCurrentKeyPressed(), 20, 120);
+        //graphics.drawString("Last key pressed: " + keyboard.getLastPressed(), 150, 120);
     }
 
     @Override

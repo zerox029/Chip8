@@ -2,11 +2,12 @@ package chip8;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.security.Key;
 
 public class Keyboard extends KeyAdapter
 {
     private int currentKeyPressed;
-    private boolean stepModeActive = true;
+    private boolean stepModeActive = false;
 
     public boolean nextInstructionPressed = false;
 
@@ -15,6 +16,11 @@ public class Keyboard extends KeyAdapter
     public boolean isStepModeActive() { return stepModeActive; }
 
     public void setCurrentKeyPressed(int value) { currentKeyPressed = value; }
+
+    public Keyboard()
+    {
+        currentKeyPressed = -1;
+    }
 
     @Override
     public void keyPressed(KeyEvent e)
@@ -32,7 +38,7 @@ public class Keyboard extends KeyAdapter
     @Override
     public void keyReleased(KeyEvent e)
     {
-        currentKeyPressed = 0;
+        currentKeyPressed = -1;
     }
 
     public int mapKeyCodeToChip8Key(int keycode)
@@ -52,7 +58,7 @@ public class Keyboard extends KeyAdapter
 
     public int keyboardInterrupt()
     {
-        while(currentKeyPressed == 0)
+        while(currentKeyPressed == -1)
         {
             try
             {

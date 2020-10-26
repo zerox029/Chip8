@@ -214,11 +214,11 @@ public class CPU {
     ///Adds the value kk to the value of register Vx, then stores the result in Vx.
     private void addOnRegister()
     {
-        byte x = getX();
-        byte xValue = registers.getVAtAddress(x);
-        byte sum = (byte) (getKK() + xValue);
+        byte xValue = registers.getVAtAddress(getX());
+        byte kk = getKK();
+        byte sum = (byte) byteToUnsignedInt((byte) (getKK() + xValue));
 
-        registers.setVAtAddress(x, sum);
+        registers.setVAtAddress(getX(), sum);
     }
 
     ///8XY0
@@ -476,7 +476,7 @@ public class CPU {
     {
         byte vx = registers.getVAtAddress(getX());
 
-        registers.setI((short) (registers.getI() + vx));
+        registers.setI((short) ((registers.getI() & 0xFFFF) + byteToUnsignedInt(vx)));
     }
 
     ///FX33

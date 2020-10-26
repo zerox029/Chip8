@@ -25,7 +25,7 @@ public class Chip8 {
         try
         {
             init();
-            loadRom("games/Space Invaders [David Winter].ch8");
+            loadRom("games/Breakout [Carmelo Cortez, 1979].ch8");
             emulationLoop();
         }
         catch (Exception err)

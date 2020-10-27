@@ -15,6 +15,7 @@ public class Chip8 {
     private Display display;
     private DebugPanel debugPanel;
     private Keyboard keyboard;
+    private Sound sound;
 
     private static final Logger LOGGER = Logger.getLogger(Chip8.class.getName());
 
@@ -25,7 +26,7 @@ public class Chip8 {
         try
         {
             init();
-            loadRom("games/Breakout [Carmelo Cortez, 1979].ch8");
+            loadRom("games/Pong (1 player).ch8");
             emulationLoop();
         }
         catch (Exception err)
@@ -39,6 +40,7 @@ public class Chip8 {
         registers = new Registers();
         memory = new Memory();
         keyboard = new Keyboard();
+        sound = new Sound();
         cpu = new CPU(memory, registers, keyboard);
         createDisplay();
 
@@ -94,7 +96,20 @@ public class Chip8 {
                     display.paintScreen();
                     registers.setDT((byte) (registers.getDT() - 0x01));
 
-                    //Sound stuff
+                    if(registers.getDT() > 0)
+                    {
+                        registers.setDT((byte) (registers.getDT() - 0x01));
+                    }
+
+                    if(registers.getST() > 0)
+                    {
+                        sound.playSound();
+                        registers.setST((byte) (registers.getST() - 0x01));
+                        if(registers.getST() == 0)
+                        {
+                            sound.stopSound();
+                        }
+                    }
                 }
 
                 endTime = System.nanoTime();

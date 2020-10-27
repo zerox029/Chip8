@@ -7,7 +7,7 @@ import java.security.Key;
 public class Keyboard extends KeyAdapter
 {
     private int currentKeyPressed;
-    private boolean stepModeActive = true;
+    private boolean stepModeActive = false;
 
     public boolean nextInstructionPressed = false;
 

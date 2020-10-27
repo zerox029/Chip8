@@ -29,6 +29,10 @@ public class Utils {
     public static final int PERIOD_NANOSECONDS = 1000000000 / CPU_FREQUENCY; //2 000 000
     public static final int CYCLES_FOR_REFRESHING = CPU_FREQUENCY / 60; //8.3333
 
+    public static final float AUDIO_SAMPLE_RATE = 48500f;
+    public static final int AUDIO_SAMPLE_SIZE = 8;
+    public static final int AUDIO_CHANNELS = 1;
+
     //Number sprites
     public static final byte[] sprite_0 = new byte[]{(byte)0xF0,(byte)0x90,(byte)0x90,(byte)0x90,(byte)0xF0};
     public static final byte[] sprite_1 = new byte[]{(byte)0x20,(byte)0x60,(byte)0x20,(byte)0x20,(byte)0x70};
